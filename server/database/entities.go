@@ -14,7 +14,19 @@ type Model struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-type User struct {
+type Player struct {
 	Model
-	UserName string `gorm:"unique" json:"username"`
+	PlayerName string `gorm:"unique" json:"username"`
+}
+
+type Throw struct {
+	Model
+	Points        uint8 `json:"points"`
+	Multiplicator uint8 `json:"multiplicator"`
+}
+
+type Game struct {
+	Model
+	Name    string   `json:"name"`
+	Players []Player `gorm:"many2many:game_players;"`
 }

@@ -17,19 +17,19 @@ func openDatabaseConnection() {
 
 func AutoMigrate() {
 	openDatabaseConnection()
-	err := database.AutoMigrate(&User{})
+	err := database.AutoMigrate(&Player{})
 	if err != nil {
 		panic("cannot migrate schema to database")
 	}
 }
 
-func FindAllUsers() []User {
-	var users []User
+func FindAllUsers() []Player {
+	var users []Player
 	database.Find(&users)
 	return users
 }
 
 func CreateDummyUser() {
-	user := User{UserName: "testico"}
+	user := Player{PlayerName: "testico"}
 	database.Save(&user)
 }
