@@ -22,7 +22,7 @@ func main() {
 
 	api := router.Group("/api")
 	{
-		api.GET("/hello", handlers.Hello)
+		api.POST("/user", handlers.CreatePlayer)
 		api.GET("/user", handlers.GetUsers)
 	}
 

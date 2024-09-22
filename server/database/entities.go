@@ -23,6 +23,7 @@ type Throw struct {
 	Model
 	Points        uint8 `json:"points"`
 	Multiplicator uint8 `json:"multiplicator"`
+	PlayerId      uint  `json:"playerId"`
 }
 
 type Game struct {

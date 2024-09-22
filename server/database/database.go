@@ -29,6 +29,10 @@ func FindAllUsers() []Player {
 	return users
 }
 
+func CreatePlayer(player *Player) {
+	database.Save(player)
+}
+
 func CreateDummyUser() {
 	user := Player{PlayerName: "testico"}
 	database.Save(&user)
