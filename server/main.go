@@ -23,7 +23,7 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.POST("/user", handlers.CreatePlayer)
-		api.GET("/user", handlers.GetUsers)
+		api.GET("/user", handlers.GetPlayers)
 	}
 
 	err := router.Run("0.0.0.0:8080")
