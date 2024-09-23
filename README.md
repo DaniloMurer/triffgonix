@@ -7,3 +7,57 @@ while teaching him vue and quasar among other things, i wasn't really content wi
 
 therefore i wanted to give it my own spin, using go instead of pocketbase and nuxt instead of quasar for the frontend.
 the real-time functionality will, at least so i think, be implemented using web sockets
+
+## setup
+
+### tools
+
+this project is made with the **GONUTS** stack (yeah i know, really creative right?)
+
+GO - well for golang in the backend.
+
+NU - nuxt for the frontend, in the end this means vue.
+
+TS - this can mean two things, typescript which is used in nuxt, but more importantly tailwindcss as the css and ui framework.
+
+this means to run triffgonix you need a node environment and have go installed on your system.
+
+### run project
+
+to run the project, you need to start the nuxt frontend and go backend.
+
+install the client dependencies and run the client:
+
+```bash
+cd client
+yarn install
+yarn dev
+```
+
+if you're not using yarn as the node package manager, use npm instead. should work just fine.
+
+then you can install the server dependencies and run the server:
+
+```bash
+cd server
+go mod tidy
+go run main.go
+```
+
+### server tests
+
+the backend has unit tests, crazy right? at the moment i mainly use unit tests to develop and assure functionality of the engine package. you can run those tests using following command:
+
+```bash
+cd server
+go test server/core/engine
+```
+
+you can even get a testing coverage for the package using following commands instead:
+
+```bash
+go test server/core/engine -coverprofile cover.out
+go tool cover -html=cover.out
+```
+
+this will open the code coverage in your default browser.

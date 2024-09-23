@@ -13,7 +13,7 @@ func TestGetNextPlayerWhenFirstPlayerTurn(t *testing.T) {
 
 	players := Players{Head: &player, CurrentPlayer: &player, Tail: &player2}
 
-	game := Game{Name: "we", Players: players, Engine: X01Engine{}}
+	game := Game{Players: players, Engine: X01Engine{}}
 
 	nextPlayer := game.Engine.NextPlayer(&game.Players)
 	if nextPlayer.PlayerName != "2" {
@@ -29,10 +29,24 @@ func TestGetNextPlayerWhenLastPlayerTurn(t *testing.T) {
 
 	players := Players{Head: &player, CurrentPlayer: &player2, Tail: &player2}
 
-	game := Game{Name: "we", Players: players, Engine: X01Engine{}}
+	game := Game{Players: players, Engine: X01Engine{}}
 
 	nextPlayer := game.Engine.NextPlayer(&game.Players)
 	if nextPlayer.PlayerName != "1" {
 		t.Fatalf(`ERROR: The next player should have been player 1. Instead got %q`, nextPlayer.PlayerName)
+	}
+}
+
+func TestRegisterThrowToPlayer(t *testing.T) {
+	player := Player{Value: &domain.Player{Id: 1}}
+
+	game := Game{Turns: make([]Turn, 0), Engine: X01Engine{}}
+
+	throw := domain.Throw{Id: 1, Points: 5, Multiplicator: 1, PlayerId: player.Value.Id}
+	game.Turns = append(game.Turns, Turn{PlayerId: player.Value.Id})
+
+	game.Engine.RegisterThrow(&throw, game.Turns)
+	if playerThrows := game.Engine.GetPlayerThrows(player.Value, game.Turns); len(*playerThrows) == 0 {
+		t.Fatalf(`ERROR: Throws for given player should be 1, instead it's zero`)
 	}
 }
