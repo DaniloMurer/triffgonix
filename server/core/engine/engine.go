@@ -1,6 +1,8 @@
 package engine
 
-import "server/core/domain"
+import (
+	"server/core/domain"
+)
 
 type Engine interface {
 	// GetPlayerThrows returns the throws made by a given player
@@ -8,9 +10,9 @@ type Engine interface {
 	// NextPlayer returns the domain object of the next player and updates the linked list accordingly
 	NextPlayer(players *Players) *domain.Player
 	// RegisterThrow registers a new player's throw
-	RegisterThrow(throw *domain.Throw, turns []Turn)
+	RegisterThrow(throw *domain.Throw, turns *[]Turn, players *Players)
 	// UndoThrow removes the last throw
-	UndoThrow(throw *domain.Throw, turns []Turn)
+	UndoThrow(throw *domain.Throw, turns *[]Turn, players *Players)
 }
 
 type Player struct {
@@ -28,9 +30,13 @@ type Players struct {
 
 func (players *Players) Add(player *Player) {
 	if players.Head == nil {
+		player.Previous = nil
 		players.Head = player
 		players.Tail = player
+		// at the beginning, the head is always the current player
+		players.CurrentPlayer = player
 	} else {
+		player.Next = nil
 		players.Tail.Next = player
 		player.Previous = players.Tail
 		players.Tail = player
@@ -44,6 +50,15 @@ func (players *Players) NextPlayer() *Player {
 	}
 	players.CurrentPlayer = nextPlayer
 	return nextPlayer
+}
+
+func (players *Players) PreviousPlayer() *Player {
+	previousPlayer := players.CurrentPlayer.Previous
+	if previousPlayer == nil {
+		previousPlayer = players.Tail
+	}
+	players.CurrentPlayer = previousPlayer
+	return previousPlayer
 }
 
 type Turn struct {
@@ -61,25 +76,25 @@ func (turn Turn) Sum() uint8 {
 	return first + second + third
 }
 
-// Append appends throw to turn. Returns false to signal a player switch is needed
+// Append appends throw to turn. Returns true to signal a player switch is needed
 func (turn *Turn) Append(throw *domain.Throw) bool {
 	if turn.First == nil {
 		turn.First = throw
-		return true
+		return false
 	} else if turn.Second == nil {
 		turn.Second = throw
-		return true
+		return false
 	} else if turn.Third == nil {
 		turn.Third = throw
-		return false
+		return true
 	}
-	return false
+	return true
 }
 
 type Game struct {
 	Name    string
-	Players Players
+	Players *Players
 	Turns   []Turn
-	Throws  []domain.Throw
+	Throws  *[]domain.Throw
 	Engine  Engine
 }

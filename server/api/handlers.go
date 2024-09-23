@@ -24,7 +24,7 @@ func GetPlayers(c *gin.Context) {
 
 func CreateGame(c *gin.Context) {
 	// TODO: implement game creation through post request
-	game := engine.Game{Name: "test", Engine: engine.X01Engine{}}
-	game.Engine.NextPlayer(&game.Players)
+	game := engine.Game{Name: "test", Engine: &engine.X01Engine{}}
+	game.Engine.NextPlayer(game.Players)
 	games = append(games, game)
 }
