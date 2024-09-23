@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var games []engine.Engine
+var games []engine.Game
 
 func CreatePlayer(c *gin.Context) {
 	player := domain.Player{Id: 0, PlayerName: "test"}
@@ -24,5 +24,7 @@ func GetPlayers(c *gin.Context) {
 
 func CreateGame(c *gin.Context) {
 	// TODO: implement game creation through post request
-	games = append(games, engine.X01Engine{Game: engine.Game{Name: "test"}})
+	game := engine.Game{Name: "test", Engine: engine.X01Engine{}}
+	game.Engine.NextPlayer(&game.Players)
+	games = append(games, game)
 }

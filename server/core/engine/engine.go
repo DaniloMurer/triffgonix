@@ -2,6 +2,17 @@ package engine
 
 import "server/core/domain"
 
+type Engine interface {
+	// getPlayerThrows returns the throws made by a given player
+	GetPlayerThrows(player *domain.Player, throws *[]domain.Throw) *[]domain.Throw
+	// nextPlayer returns the domain object of the next player and updates the linked list accordingly
+	NextPlayer(players *Players) *domain.Player
+	// RegisterThrow registers a new player's throw
+	RegisterThrow(throw *domain.Throw, throws *[]domain.Throw)
+	// UndoThrow removes the last throw and returns the player id of the next player
+	UndoThrow(throw *domain.Throw, throws *[]domain.Throw)
+}
+
 type Player struct {
 	Value    *domain.Player
 	Previous *Player
@@ -35,20 +46,9 @@ func (players *Players) NextPlayer() *Player {
 	return nextPlayer
 }
 
-// FIXME: maybe the engine should be part of the game struct for clarity sake
 type Game struct {
 	Name    string
 	Players Players
 	Throws  []domain.Throw
-}
-
-type Engine interface {
-	// getPlayerThrows returns the throws made by a given player
-	getPlayerThrows(player *domain.Player) *[]domain.Throw
-	// nextPlayer returns the domain object of the next player and updates the linked list accordingly
-	nextPlayer() *domain.Player
-	// RegisterThrow registers a new player's throw and returns the player id of the next player
-	RegisterThrow(throw *domain.Throw) uint
-	// UndoThrow removes the last throw and returns the player id of the next player
-	UndoThrow(throw *domain.Throw) uint
+	Engine  Engine
 }
