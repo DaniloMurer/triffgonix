@@ -1,15 +1,14 @@
 package engine
 
 import (
-	"fmt"
 	"server/core/domain"
 	"testing"
 )
 
 // if we're at the first player, the netx player should be the second one in the list
 func TestGetNextPlayerWhenFirstPlayerTurn(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1"}, Previous: nil, Next: nil}
-	player2 := Player{Value: &domain.Player{PlayerName: "2"}, Previous: &player, Next: nil}
+	player := Player{Value: &domain.Player{PlayerName: "1"}, Previous: nil, Next: nil, Turns: []Turn{}}
+	player2 := Player{Value: &domain.Player{PlayerName: "2"}, Previous: &player, Next: nil, Turns: []Turn{}}
 	player.Next = &player2
 
 	players := Players{Head: &player, CurrentPlayer: &player, Tail: &player2}
@@ -39,27 +38,27 @@ func TestGetNextPlayerWhenLastPlayerTurn(t *testing.T) {
 }
 
 func TestRegisterThrowToPlayer(t *testing.T) {
-	player := Player{Value: &domain.Player{Id: 1}}
+	player := Player{Value: &domain.Player{Id: 1}, Turns: []Turn{}}
 
-	game := Game{Turns: make([]Turn, 0), Engine: &X01Engine{}}
+	game := Game{Engine: &X01Engine{}, Players: &Players{}}
 
-	// throw := domain.Throw{Id: 1, Points: 5, Multiplicator: 1, PlayerId: player.Value.Id}
-	game.Turns = append(game.Turns, Turn{PlayerId: player.Value.Id})
+	throw := domain.Throw{Id: 1, Points: 5, Multiplicator: 1, PlayerId: player.Value.Id}
+	game.Players.Add(&player)
 
-	/*game.Engine.RegisterThrow(&throw, game.Turns, game.Players)
-	if playerThrows := game.Engine.GetPlayerThrows(player.Value, game.Turns); len(*playerThrows) == 0 {
+	game.Engine.RegisterThrow(&throw, game.Players)
+	if playerThrows := game.Engine.GetPlayerThrows(&player); len(*playerThrows) == 0 {
 		t.Fatalf(`ERROR: Throws for given player should be 1, instead it's zero`)
 	}
 
-	if len(game.Turns) != 1 {
+	if len(game.Players.CurrentPlayer.Turns) != 1 {
 		t.Fatalf("ERROR: expected only on turn, since there was till space for adding a throw. instead a new turn was created")
-	}*/
+	}
 }
 
 func TestPlayerLogic(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2}}
-	game := Game{Players: &Players{}, Turns: []Turn{}, Engine: &X01Engine{}}
+	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []Turn{}}
+	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []Turn{}}
+	game := Game{Players: &Players{}, Engine: &X01Engine{}}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -93,31 +92,28 @@ func TestPlayerLogic(t *testing.T) {
 	throw2 := domain.Throw{Id: 2, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
 	throw3 := domain.Throw{Id: 3, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
 
-	game.Engine.RegisterThrow(&throw, &game.Turns, game.Players)
-	game.Engine.RegisterThrow(&throw2, &game.Turns, game.Players)
-	game.Engine.RegisterThrow(&throw3, &game.Turns, game.Players)
+	game.Engine.RegisterThrow(&throw, game.Players)
+	game.Engine.RegisterThrow(&throw2, game.Players)
+	game.Engine.RegisterThrow(&throw3, game.Players)
 
 	if game.Players.CurrentPlayer.Value.Id != player2.Value.Id {
 		t.Fatalf(`ERROR: expected the player to change to player2 after three throws. instead got player with id: %d`, game.Players.CurrentPlayer.Value.Id)
 	}
 
-	game.Engine.RegisterThrow(&throw, &game.Turns, game.Players)
-	game.Engine.RegisterThrow(&throw2, &game.Turns, game.Players)
-	game.Engine.RegisterThrow(&throw3, &game.Turns, game.Players)
+	game.Engine.RegisterThrow(&throw, game.Players)
+	game.Engine.RegisterThrow(&throw2, game.Players)
+	game.Engine.RegisterThrow(&throw3, game.Players)
 
 	if game.Players.CurrentPlayer.Value.Id != player.Value.Id {
 		t.Fatalf(`ERROR: expected the player to change to player1 after three throws. instead got player with id %d`, game.Players.CurrentPlayer.Value.Id)
 	}
 
 	var playerTurns []Turn
-	for _, turn := range game.Turns {
-		fmt.Printf("trace: turn %+v", turn)
-		if turn.PlayerId == player.Value.Id {
-			playerTurns = append(playerTurns, turn)
-		}
+	for _, turn := range game.Players.CurrentPlayer.Turns {
+		playerTurns = append(playerTurns, turn)
 	}
 
-	if len(playerTurns) != 1 && playerTurns[0].PlayerId != player.Value.Id {
-		t.Fatalf(`ERROR: expected the player to have one turn that blongs to him, instead got %d belonging to %d`, len(playerTurns), playerTurns[0].PlayerId)
+	if len(playerTurns) != 1 {
+		t.Fatalf(`ERROR: expected the player to have one turn that blongs to him, instead got %d`, len(playerTurns))
 	}
 }

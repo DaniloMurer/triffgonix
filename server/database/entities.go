@@ -17,6 +17,7 @@ type Model struct {
 type Player struct {
 	Model
 	PlayerName string `gorm:"unique" json:"username"`
+	// TODO: make player - throws connection
 }
 
 type Throw struct {

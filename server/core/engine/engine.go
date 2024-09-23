@@ -6,19 +6,27 @@ import (
 
 type Engine interface {
 	// GetPlayerThrows returns the throws made by a given player
-	GetPlayerThrows(player *domain.Player, turns []Turn) *[]domain.Throw
+	GetPlayerThrows(player *Player) *[]domain.Throw
 	// NextPlayer returns the domain object of the next player and updates the linked list accordingly
 	NextPlayer(players *Players) *domain.Player
 	// RegisterThrow registers a new player's throw
-	RegisterThrow(throw *domain.Throw, turns *[]Turn, players *Players)
+	RegisterThrow(throw *domain.Throw, players *Players)
 	// UndoThrow removes the last throw
-	UndoThrow(throw *domain.Throw, turns *[]Turn, players *Players)
+	UndoThrow(throw *domain.Throw, players *Players)
 }
 
 type Player struct {
 	Value    *domain.Player
 	Previous *Player
 	Next     *Player
+	Turns    []Turn
+}
+
+func (player Player) CalculateScore() {
+	var totalSum uint16
+	for _, turn := range player.Turns {
+		totalSum += uint16(turn.Sum())
+	}
 }
 
 // Players is a linked list of the players in a given game
@@ -62,10 +70,9 @@ func (players *Players) PreviousPlayer() *Player {
 }
 
 type Turn struct {
-	First    *domain.Throw
-	Second   *domain.Throw
-	Third    *domain.Throw
-	PlayerId uint
+	First  *domain.Throw
+	Second *domain.Throw
+	Third  *domain.Throw
 }
 
 func (turn Turn) Sum() uint8 {
@@ -94,7 +101,6 @@ func (turn *Turn) Append(throw *domain.Throw) bool {
 type Game struct {
 	Name    string
 	Players *Players
-	Turns   []Turn
 	Throws  *[]domain.Throw
 	Engine  Engine
 }
