@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"server/core/domain"
 )
 
@@ -15,7 +14,9 @@ type Engine interface {
 	// UndoThrow removes the last throw
 	UndoThrow(throw *domain.Throw, players *Players)
 	// CalculatePlayerScore returns the player score across all turns
-	CalculatePlayerScore(player *Player, startingScore uint16)
+	CalculatePlayerScore(player *Player)
+	// HasAnyPlayerWon returns then winning player if one exists
+	HasAnyPlayerWon(players *Players) *Player
 }
 
 type Player struct {
@@ -23,14 +24,6 @@ type Player struct {
 	Previous *Player
 	Next     *Player
 	Turns    []Turn
-}
-
-func (player *Player) CalculateScore(startingScore uint16) {
-	var totalSum uint16
-	for _, turn := range player.Turns {
-		totalSum += uint16(turn.Sum())
-	}
-	player.Value.Score = startingScore - totalSum
 }
 
 // Players is a linked list of the players in a given game
@@ -55,7 +48,7 @@ func (players *Players) Add(player *Player) {
 	}
 }
 
-func (players *Players) NextPlayer() *Player {
+func (players *Players) SwitchToNextPlayer() *Player {
 	nextPlayer := players.CurrentPlayer.Next
 	if nextPlayer == nil {
 		nextPlayer = players.Head
@@ -64,12 +57,20 @@ func (players *Players) NextPlayer() *Player {
 	return nextPlayer
 }
 
-func (players *Players) PreviousPlayer() *Player {
+func (players *Players) SwitchToPreviousPlayer() *Player {
 	previousPlayer := players.CurrentPlayer.Previous
 	if previousPlayer == nil {
 		previousPlayer = players.Tail
 	}
 	players.CurrentPlayer = previousPlayer
+	return previousPlayer
+}
+
+func (players *Players) GetPreviousPlayer() *Player {
+	previousPlayer := players.CurrentPlayer.Previous
+	if previousPlayer == nil {
+		previousPlayer = players.Tail
+	}
 	return previousPlayer
 }
 
@@ -79,11 +80,10 @@ type Turn struct {
 	Third  *domain.Throw
 }
 
-func (turn Turn) Sum() uint8 {
-	var first uint8
-	var second uint8
-	var third uint8
-	fmt.Printf("trace: turn - %+v\n", turn)
+func (turn *Turn) Sum() uint16 {
+	var first uint16
+	var second uint16
+	var third uint16
 	if turn.First != nil {
 		first = turn.First.Points * turn.First.Multiplicator
 	}
@@ -112,7 +112,7 @@ func (turn *Turn) Append(throw *domain.Throw) bool {
 	return true
 }
 
-func (turn Turn) HasSpace() bool {
+func (turn *Turn) HasSpace() bool {
 	if turn.First != nil && turn.Second != nil && turn.Third != nil {
 		return false
 	} else {
@@ -121,9 +121,8 @@ func (turn Turn) HasSpace() bool {
 }
 
 type Game struct {
-	Name          string
-	StartingScore uint16
-	Players       *Players
-	Throws        *[]domain.Throw
-	Engine        Engine
+	Name    string
+	Players *Players
+	Throws  *[]domain.Throw
+	Engine  Engine
 }

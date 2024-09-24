@@ -56,10 +56,10 @@ func (self *Game) FromGameEntity(game *database.Game) *Game {
 }
 
 type Throw struct {
-	Id            uint  `json:"id"`
-	Points        uint8 `json:"points"`
-	Multiplicator uint8 `json:"multiplicator"`
-	PlayerId      uint  `json:"playerId"`
+	Id            uint   `json:"id"`
+	Points        uint16 `json:"points"`
+	Multiplicator uint16 `json:"multiplicator"`
+	PlayerId      uint   `json:"playerId"`
 }
 
 func (self *Throw) ToThrowEntity() *database.Throw {

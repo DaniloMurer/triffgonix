@@ -4,9 +4,11 @@ import (
 	"server/core/domain"
 )
 
-type X01Engine struct{}
+type X01Engine struct {
+	StartingScore uint16
+}
 
-func (engine X01Engine) GetPlayerThrows(player *Player) *[]domain.Throw {
+func (engine *X01Engine) GetPlayerThrows(player *Player) *[]domain.Throw {
 	var playerThrows []domain.Throw
 	for _, turn := range player.Turns {
 		if turn.First != nil {
@@ -23,7 +25,7 @@ func (engine X01Engine) GetPlayerThrows(player *Player) *[]domain.Throw {
 }
 
 func (engine *X01Engine) NextPlayer(players *Players) *domain.Player {
-	return players.NextPlayer().Value
+	return players.SwitchToNextPlayer().Value
 }
 
 func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
@@ -33,21 +35,23 @@ func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
 		newTurn := &Turn{}
 		newTurn.Append(throw)
 		players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
+		engine.CalculatePlayerScore(players.CurrentPlayer)
 		return
 	}
 	latestTurn := &players.CurrentPlayer.Turns[latestTurnIndex]
 	if !latestTurn.HasSpace() {
 		newTurn := &Turn{}
 		newTurn.Append(throw)
-		players.CurrentPlayer.Turns[latestTurnIndex+1] = *newTurn
+		players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
+		engine.CalculatePlayerScore(players.CurrentPlayer)
 		return
 	}
 	hasToSwitchPlayer := latestTurn.Append(throw)
+	engine.CalculatePlayerScore(players.CurrentPlayer)
 	if hasToSwitchPlayer {
-		players.NextPlayer()
+		players.SwitchToNextPlayer()
 		return
 	}
-	players.CurrentPlayer.Turns[latestTurnIndex] = *latestTurn
 }
 
 func (engine *X01Engine) UndoThrow(throw *domain.Throw, players *Players) {
@@ -59,14 +63,25 @@ func (engine *X01Engine) UndoThrow(throw *domain.Throw, players *Players) {
 		latestTurn.Second = nil
 	} else if latestTurn.First != nil {
 		latestTurn.First = nil
-		players.PreviousPlayer()
+		players.SwitchToPreviousPlayer()
 	}
 }
 
-func (engine *X01Engine) CalculatePlayerScore(player *Player, startingScore uint16) {
+func (engine *X01Engine) CalculatePlayerScore(player *Player) {
 	var totalSum uint16
 	for _, turn := range player.Turns {
-		totalSum += uint16(turn.Sum())
+		totalSum += turn.Sum()
 	}
-	player.Value.Score = startingScore - totalSum
+	player.Value.Score = engine.StartingScore - totalSum
+}
+
+func (engine *X01Engine) HasAnyPlayerWon(players *Players) *Player {
+	head := players.Head
+	for head != nil {
+		if head.Value.Score == 0 {
+			return head
+		}
+		head = head.Next
+	}
+	return nil
 }
