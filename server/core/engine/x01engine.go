@@ -28,6 +28,7 @@ func (engine *X01Engine) NextPlayer(players *Players) *domain.Player {
 
 func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
 	latestTurnIndex := len(players.CurrentPlayer.Turns) - 1
+	// if player has no turns, then one should be created first
 	if latestTurnIndex < 0 {
 		newTurn := &Turn{}
 		newTurn.Append(throw)
@@ -35,11 +36,14 @@ func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
 		return
 	}
 	latestTurn := &players.CurrentPlayer.Turns[latestTurnIndex]
-	needsNewTurn := latestTurn.Append(throw)
-	if needsNewTurn {
+	if !latestTurn.HasSpace() {
 		newTurn := &Turn{}
 		newTurn.Append(throw)
-		players.CurrentPlayer.Turns[latestTurnIndex] = *newTurn
+		players.CurrentPlayer.Turns[latestTurnIndex+1] = *newTurn
+		return
+	}
+	hasToSwitchPlayer := latestTurn.Append(throw)
+	if hasToSwitchPlayer {
 		players.NextPlayer()
 		return
 	}
@@ -57,4 +61,12 @@ func (engine *X01Engine) UndoThrow(throw *domain.Throw, players *Players) {
 		latestTurn.First = nil
 		players.PreviousPlayer()
 	}
+}
+
+func (engine *X01Engine) CalculatePlayerScore(player *Player, startingScore uint16) {
+	var totalSum uint16
+	for _, turn := range player.Turns {
+		totalSum += uint16(turn.Sum())
+	}
+	player.Value.Score = startingScore - totalSum
 }

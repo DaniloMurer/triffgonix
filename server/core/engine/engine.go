@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"server/core/domain"
 )
 
@@ -13,6 +14,8 @@ type Engine interface {
 	RegisterThrow(throw *domain.Throw, players *Players)
 	// UndoThrow removes the last throw
 	UndoThrow(throw *domain.Throw, players *Players)
+	// CalculatePlayerScore returns the player score across all turns
+	CalculatePlayerScore(player *Player, startingScore uint16)
 }
 
 type Player struct {
@@ -22,11 +25,12 @@ type Player struct {
 	Turns    []Turn
 }
 
-func (player Player) CalculateScore() {
+func (player *Player) CalculateScore(startingScore uint16) {
 	var totalSum uint16
 	for _, turn := range player.Turns {
 		totalSum += uint16(turn.Sum())
 	}
+	player.Value.Score = startingScore - totalSum
 }
 
 // Players is a linked list of the players in a given game
@@ -76,9 +80,19 @@ type Turn struct {
 }
 
 func (turn Turn) Sum() uint8 {
-	first := turn.First.Points * turn.First.Multiplicator
-	second := turn.Second.Points * turn.Second.Multiplicator
-	third := turn.Third.Points * turn.Third.Multiplicator
+	var first uint8
+	var second uint8
+	var third uint8
+	fmt.Printf("trace: turn - %+v\n", turn)
+	if turn.First != nil {
+		first = turn.First.Points * turn.First.Multiplicator
+	}
+	if turn.Second != nil {
+		second = turn.Second.Points * turn.Second.Multiplicator
+	}
+	if turn.Third != nil {
+		third = turn.Third.Points * turn.Third.Multiplicator
+	}
 
 	return first + second + third
 }
@@ -98,9 +112,18 @@ func (turn *Turn) Append(throw *domain.Throw) bool {
 	return true
 }
 
+func (turn Turn) HasSpace() bool {
+	if turn.First != nil && turn.Second != nil && turn.Third != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
 type Game struct {
-	Name    string
-	Players *Players
-	Throws  *[]domain.Throw
-	Engine  Engine
+	Name          string
+	StartingScore uint16
+	Players       *Players
+	Throws        *[]domain.Throw
+	Engine        Engine
 }
