@@ -24,11 +24,13 @@ func (engine *X01Engine) GetPlayerThrows(player *Player) *[]domain.Throw {
 	return &playerThrows
 }
 
+// FIXME: can probably delete this
 func (engine *X01Engine) NextPlayer(players *Players) *domain.Player {
 	return players.SwitchToNextPlayer().Value
 }
 
 func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
+	// TODO: call method for checking overthrow, then call RegisterThrow recursively for filling the remaining slots in turn
 	latestTurnIndex := len(players.CurrentPlayer.Turns) - 1
 	// if player has no turns, then one should be created first
 	if latestTurnIndex < 0 {
@@ -54,16 +56,20 @@ func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
 	}
 }
 
-func (engine *X01Engine) UndoThrow(throw *domain.Throw, players *Players) {
+func (engine *X01Engine) UndoLastThrow(players *Players) {
 	latestTurnIndex := len(players.CurrentPlayer.Turns) - 1
-	latestTurn := players.CurrentPlayer.Turns[latestTurnIndex]
+	latestTurn := &players.CurrentPlayer.Turns[latestTurnIndex]
+	if latestTurn.First == nil {
+		players.SwitchToPreviousPlayer()
+		engine.UndoLastThrow(players)
+	}
+
 	if latestTurn.Third != nil {
 		latestTurn.Third = nil
 	} else if latestTurn.Second != nil {
 		latestTurn.Second = nil
 	} else if latestTurn.First != nil {
 		latestTurn.First = nil
-		players.SwitchToPreviousPlayer()
 	}
 }
 

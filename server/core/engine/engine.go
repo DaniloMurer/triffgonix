@@ -8,11 +8,12 @@ type Engine interface {
 	// GetPlayerThrows returns the throws made by a given player
 	GetPlayerThrows(player *Player) *[]domain.Throw
 	// NextPlayer returns the domain object of the next player and updates the linked list accordingly
+	// FIXME: can probably delete this
 	NextPlayer(players *Players) *domain.Player
 	// RegisterThrow registers a new player's throw
 	RegisterThrow(throw *domain.Throw, players *Players)
 	// UndoThrow removes the last throw
-	UndoThrow(throw *domain.Throw, players *Players)
+	UndoLastThrow(players *Players)
 	// CalculatePlayerScore returns the player score across all turns
 	CalculatePlayerScore(player *Player)
 	// HasAnyPlayerWon returns then winning player if one exists

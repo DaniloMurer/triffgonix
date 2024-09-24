@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"server/core/domain"
 	"testing"
 )
@@ -233,5 +234,71 @@ func TestX01Engine_HasAnyPlayerWon_AfterThrows(t *testing.T) {
 	game.Engine.RegisterThrow(&throw6, game.Players)
 	if game.Engine.HasAnyPlayerWon(game.Players) == nil {
 		t.Fatal("ERROR: player 2 was supposed to win")
+	}
+}
+
+func TestX01Engine_UndoThrow(t *testing.T) {
+	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []Turn{}}
+	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+
+	game.Players.Add(&player)
+
+	throw := domain.Throw{Id: 1, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+
+	game.Engine.RegisterThrow(&throw, game.Players)
+	playerThrows := game.Engine.GetPlayerThrows(&player)
+	if len(*playerThrows) != 1 {
+		t.Fatal("ERROR: expected player throws to contain one throw")
+	}
+
+	game.Engine.UndoLastThrow(game.Players)
+	playerThrows2 := game.Engine.GetPlayerThrows(&player)
+
+	fmt.Printf("trace: playerThrows2 - %+v\n", playerThrows2)
+	if len(*playerThrows2) != 0 {
+		t.Fatal("ERROR: expected player throws to contain no throws after undo")
+	}
+}
+
+func TestX01Engine_UndoThrow_WhenSecondPlayerTurn(t *testing.T) {
+	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []Turn{}}
+	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 2}, Turns: []Turn{}}
+	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+
+	game.Players.Add(&player)
+	game.Players.Add(&player2)
+
+	throw := domain.Throw{Id: 1, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw2 := domain.Throw{Id: 2, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw3 := domain.Throw{Id: 3, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+
+	game.Engine.RegisterThrow(&throw, game.Players)
+	game.Engine.RegisterThrow(&throw2, game.Players)
+	game.Engine.RegisterThrow(&throw3, game.Players)
+
+	if len(*game.Engine.GetPlayerThrows(&player)) != 3 {
+		t.Fatal("ERROR: expected the first player to have three throws registred")
+	}
+
+	game.Engine.RegisterThrow(&throw, game.Players)
+
+	if len(*game.Engine.GetPlayerThrows(&player2)) != 1 {
+		t.Fatal("ERROR: expected the second player to have one throw registred")
+	}
+
+	game.Engine.UndoLastThrow(game.Players)
+
+	if len(*game.Engine.GetPlayerThrows(&player2)) != 0 {
+		t.Fatal("ERROR: expected the second player to have zero throws registred after undo")
+	}
+
+	game.Engine.UndoLastThrow(game.Players)
+
+	if len(*game.Engine.GetPlayerThrows(&player)) != 2 {
+		t.Fatal("ERROR: expected the first player to have two throws registred after undo")
+	}
+
+	if game.Players.CurrentPlayer.Value.Id != player.Value.Id {
+		t.Fatal("ERROR: expected the first player to be current player after undo")
 	}
 }
