@@ -5,6 +5,9 @@ import (
 )
 
 type Engine interface {
+	// FIXME: i think for the future it would make sense to have a way to tell if certain points can be made.
+	// an example would be shangai, where after hitting three times a certain point, you cannot score on it no more.
+
 	// GetPlayerThrows returns the throws made by a given player
 	GetPlayerThrows(player *Player) *[]domain.Throw
 	// RegisterThrow registers a new player's throw
@@ -24,6 +27,17 @@ type Player struct {
 	Turns    []Turn
 }
 
+// GetAverarePoints gets average points scored across all turns from player
+func (player *Player) GetAverarePoints() int16 {
+	var averagePoints int16
+	var throwCount int16
+	for _, turn := range player.Turns {
+		averagePoints += turn.Sum()
+		throwCount += turn.ThrowCount()
+	}
+	return averagePoints / throwCount
+}
+
 // Players is a linked list of the players in a given game
 type Players struct {
 	Head          *Player
@@ -31,6 +45,7 @@ type Players struct {
 	Tail          *Player
 }
 
+// Add adds new player to the linked list
 func (players *Players) Add(player *Player) {
 	if players.Head == nil {
 		player.Previous = nil
@@ -46,6 +61,7 @@ func (players *Players) Add(player *Player) {
 	}
 }
 
+// SwitchToNextPlayer switches to the next player from the CurrentPlayer perspective
 func (players *Players) SwitchToNextPlayer() *Player {
 	nextPlayer := players.CurrentPlayer.Next
 	if nextPlayer == nil {
@@ -55,6 +71,7 @@ func (players *Players) SwitchToNextPlayer() *Player {
 	return nextPlayer
 }
 
+// SwitchToPreviousPlayer switches to the previous player from the CurrentPlayer perspective
 func (players *Players) SwitchToPreviousPlayer() *Player {
 	previousPlayer := players.CurrentPlayer.Previous
 	if previousPlayer == nil {
@@ -64,6 +81,7 @@ func (players *Players) SwitchToPreviousPlayer() *Player {
 	return previousPlayer
 }
 
+// GetPreviousPlayer returns the previous player from the CurrentPlayer perspective
 func (players *Players) GetPreviousPlayer() *Player {
 	previousPlayer := players.CurrentPlayer.Previous
 	if previousPlayer == nil {
@@ -78,6 +96,7 @@ type Turn struct {
 	Third  *domain.Throw
 }
 
+// Sum returns the sum of all throws in the turn
 func (turn *Turn) Sum() int16 {
 	var first int16
 	var second int16
@@ -110,6 +129,7 @@ func (turn *Turn) Append(throw *domain.Throw) bool {
 	return true
 }
 
+// HasSpace checks if the turn has a free slot for a throw
 func (turn *Turn) HasSpace() bool {
 	if turn.First != nil && turn.Second != nil && turn.Third != nil {
 		return false
@@ -118,6 +138,7 @@ func (turn *Turn) HasSpace() bool {
 	}
 }
 
+// FillTurn fills the turn with 0 points throws
 func (turn *Turn) FillTurn(throw *domain.Throw) {
 	if turn.First == nil {
 		turn.First = &domain.Throw{Points: 0, Multiplicator: 1, PlayerId: throw.PlayerId}
@@ -128,6 +149,21 @@ func (turn *Turn) FillTurn(throw *domain.Throw) {
 	if turn.Third == nil {
 		turn.Third = &domain.Throw{Points: 0, Multiplicator: 1, PlayerId: throw.PlayerId}
 	}
+}
+
+// ThrowCount returns the count of throws in the turn
+func (turn *Turn) ThrowCount() int16 {
+	var throwCount int16 = 0
+	if turn.First != nil {
+		throwCount += 1
+	}
+	if turn.Second != nil {
+		throwCount += 1
+	}
+	if turn.Third != nil {
+		throwCount += 1
+	}
+	return throwCount
 }
 
 type Game struct {
