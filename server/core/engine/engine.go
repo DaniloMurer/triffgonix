@@ -7,12 +7,9 @@ import (
 type Engine interface {
 	// GetPlayerThrows returns the throws made by a given player
 	GetPlayerThrows(player *Player) *[]domain.Throw
-	// NextPlayer returns the domain object of the next player and updates the linked list accordingly
-	// FIXME: can probably delete this
-	NextPlayer(players *Players) *domain.Player
 	// RegisterThrow registers a new player's throw
 	RegisterThrow(throw *domain.Throw, players *Players)
-	// UndoThrow removes the last throw
+	// UndoLastThrow removes the last throw
 	UndoLastThrow(players *Players)
 	// CalculatePlayerScore returns the player score across all turns
 	CalculatePlayerScore(player *Player)
@@ -81,10 +78,10 @@ type Turn struct {
 	Third  *domain.Throw
 }
 
-func (turn *Turn) Sum() uint16 {
-	var first uint16
-	var second uint16
-	var third uint16
+func (turn *Turn) Sum() int16 {
+	var first int16
+	var second int16
+	var third int16
 	if turn.First != nil {
 		first = turn.First.Points * turn.First.Multiplicator
 	}
@@ -118,6 +115,18 @@ func (turn *Turn) HasSpace() bool {
 		return false
 	} else {
 		return true
+	}
+}
+
+func (turn *Turn) FillTurn(throw *domain.Throw) {
+	if turn.First == nil {
+		turn.First = &domain.Throw{Points: 0, Multiplicator: 1, PlayerId: throw.PlayerId}
+	}
+	if turn.Second == nil {
+		turn.Second = &domain.Throw{Points: 0, Multiplicator: 1, PlayerId: throw.PlayerId}
+	}
+	if turn.Third == nil {
+		turn.Third = &domain.Throw{Points: 0, Multiplicator: 1, PlayerId: throw.PlayerId}
 	}
 }
 

@@ -5,7 +5,7 @@ import "server/database"
 type Player struct {
 	Id         uint   `json:"id"`
 	PlayerName string `json:"playerName"`
-	Score      uint16 `json:"-"`
+	Score      int16  `json:"-"`
 }
 
 func (self *Player) ToPlayerEntity() *database.Player {
@@ -56,10 +56,10 @@ func (self *Game) FromGameEntity(game *database.Game) *Game {
 }
 
 type Throw struct {
-	Id            uint   `json:"id"`
-	Points        uint16 `json:"points"`
-	Multiplicator uint16 `json:"multiplicator"`
-	PlayerId      uint   `json:"playerId"`
+	Id            uint  `json:"id"`
+	Points        int16 `json:"points"`
+	Multiplicator int16 `json:"multiplicator"`
+	PlayerId      uint  `json:"playerId"`
 }
 
 func (self *Throw) ToThrowEntity() *database.Throw {

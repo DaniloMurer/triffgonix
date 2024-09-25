@@ -1,11 +1,12 @@
 package engine
 
 import (
+	"fmt"
 	"server/core/domain"
 )
 
 type X01Engine struct {
-	StartingScore uint16
+	StartingScore int16
 }
 
 func (engine *X01Engine) GetPlayerThrows(player *Player) *[]domain.Throw {
@@ -24,35 +25,52 @@ func (engine *X01Engine) GetPlayerThrows(player *Player) *[]domain.Throw {
 	return &playerThrows
 }
 
-// FIXME: can probably delete this
-func (engine *X01Engine) NextPlayer(players *Players) *domain.Player {
-	return players.SwitchToNextPlayer().Value
-}
-
 func (engine *X01Engine) RegisterThrow(throw *domain.Throw, players *Players) {
-	// TODO: call method for checking overthrow, then call RegisterThrow recursively for filling the remaining slots in turn
 	latestTurnIndex := len(players.CurrentPlayer.Turns) - 1
 	// if player has no turns, then one should be created first
 	if latestTurnIndex < 0 {
 		newTurn := &Turn{}
-		newTurn.Append(throw)
-		players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
-		engine.CalculatePlayerScore(players.CurrentPlayer)
-		return
+		hasOverthrown := engine.checkForOverThrow(throw, players.CurrentPlayer)
+		if hasOverthrown {
+			newTurn.FillTurn(throw)
+			players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
+			players.SwitchToNextPlayer()
+			return
+		} else {
+			newTurn.Append(throw)
+			players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
+			engine.CalculatePlayerScore(players.CurrentPlayer)
+			return
+		}
 	}
 	latestTurn := &players.CurrentPlayer.Turns[latestTurnIndex]
 	if !latestTurn.HasSpace() {
 		newTurn := &Turn{}
-		newTurn.Append(throw)
-		players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
-		engine.CalculatePlayerScore(players.CurrentPlayer)
-		return
+		hasOverthrown := engine.checkForOverThrow(throw, players.CurrentPlayer)
+		if hasOverthrown {
+			latestTurn.FillTurn(throw)
+			players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
+			players.SwitchToNextPlayer()
+			return
+		} else {
+			newTurn.Append(throw)
+			players.CurrentPlayer.Turns = append(players.CurrentPlayer.Turns, *newTurn)
+			engine.CalculatePlayerScore(players.CurrentPlayer)
+			return
+		}
 	}
-	hasToSwitchPlayer := latestTurn.Append(throw)
-	engine.CalculatePlayerScore(players.CurrentPlayer)
-	if hasToSwitchPlayer {
+	hasOverthrown := engine.checkForOverThrow(throw, players.CurrentPlayer)
+	if hasOverthrown {
+		latestTurn.FillTurn(throw)
 		players.SwitchToNextPlayer()
 		return
+	} else {
+		hasToSwitchPlayer := latestTurn.Append(throw)
+		engine.CalculatePlayerScore(players.CurrentPlayer)
+		if hasToSwitchPlayer {
+			players.SwitchToNextPlayer()
+			return
+		}
 	}
 }
 
@@ -74,7 +92,7 @@ func (engine *X01Engine) UndoLastThrow(players *Players) {
 }
 
 func (engine *X01Engine) CalculatePlayerScore(player *Player) {
-	var totalSum uint16
+	var totalSum int16
 	for _, turn := range player.Turns {
 		totalSum += turn.Sum()
 	}
@@ -90,4 +108,20 @@ func (engine *X01Engine) HasAnyPlayerWon(players *Players) *Player {
 		head = head.Next
 	}
 	return nil
+}
+
+func (engine *X01Engine) checkForOverThrow(throw *domain.Throw, player *Player) bool {
+	if throw.Points == 0 {
+		return false
+	}
+	var tempScore int16
+	for _, turn := range player.Turns {
+		tempScore += turn.Sum()
+	}
+	tempScore += throw.Multiplicator * throw.Points
+	if (engine.StartingScore - tempScore) < 0 {
+		fmt.Printf("trace: overthrown with score: %d\n", engine.StartingScore-tempScore)
+		return true
+	}
+	return false
 }

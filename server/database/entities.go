@@ -22,9 +22,9 @@ type Player struct {
 
 type Throw struct {
 	Model
-	Points        uint16 `json:"points"`
-	Multiplicator uint16 `json:"multiplicator"`
-	PlayerId      uint   `json:"playerId"`
+	Points        int16 `json:"points"`
+	Multiplicator int16 `json:"multiplicator"`
+	PlayerId      uint  `json:"playerId"`
 }
 
 type Game struct {

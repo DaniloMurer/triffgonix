@@ -9,7 +9,7 @@ import (
 func TestX01Engine_RegisterThrow(t *testing.T) {
 	player := Player{Value: &domain.Player{Id: 1}, Turns: []Turn{}}
 
-	game := Game{Engine: &X01Engine{}, Players: &Players{}}
+	game := Game{Engine: &X01Engine{StartingScore: 301}, Players: &Players{}}
 
 	throw := domain.Throw{Id: 1, Points: 5, Multiplicator: 1, PlayerId: player.Value.Id}
 	game.Players.Add(&player)
@@ -300,5 +300,34 @@ func TestX01Engine_UndoThrow_WhenSecondPlayerTurn(t *testing.T) {
 
 	if game.Players.CurrentPlayer.Value.Id != player.Value.Id {
 		t.Fatal("ERROR: expected the first player to be current player after undo")
+	}
+}
+
+func TestX01Engine_OverThrow_Scenario(t *testing.T) {
+	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 0}, Turns: []Turn{}}
+	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 0}, Turns: []Turn{}}
+	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+
+	game.Players.Add(&player)
+	game.Players.Add(&player2)
+
+	throw := domain.Throw{Id: 1, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw2 := domain.Throw{Id: 2, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw3 := domain.Throw{Id: 3, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw4 := domain.Throw{Id: 4, Points: 302, Multiplicator: 1, PlayerId: player.Value.Id}
+	game.Engine.RegisterThrow(&throw, game.Players)
+	game.Engine.RegisterThrow(&throw2, game.Players)
+	game.Engine.RegisterThrow(&throw3, game.Players)
+
+	if game.Players.CurrentPlayer.Value.Id != player2.Value.Id {
+		t.Fatalf("ERROR: expected player two to be the current player")
+	}
+	game.Engine.RegisterThrow(&throw4, game.Players)
+	if player2.Turns[0].Sum() != 0 {
+		t.Fatalf("ERROR: expected player two on a overthrow to have a zero points in turn. instead got: %d",
+			player2.Turns[0].Sum())
+	}
+	if game.Players.CurrentPlayer.Value.Id != player.Value.Id {
+		t.Fatalf("ERROR: expected player one to be current player after overthrow")
 	}
 }
