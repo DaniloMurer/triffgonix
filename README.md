@@ -1,5 +1,9 @@
 # triffgonix
 
+<img alt="ai image" height="300px" src="assets/triffgonix_logo_ai.png" width="300px"/>
+
+^ this logo is ai generated, but if you got a better one i'm open for suggestions : )
+
 ## what it is about
 
 at work i had the task to mentor an intern into making a real-time dart application for our team.
@@ -61,3 +65,12 @@ go tool cover -html=cover.out
 ```
 
 this will open the code coverage in your default browser.
+
+## server code structure
+
+the server code is structured in following "features":
+
+- **api** - here goes the code for the http and web socket interface
+- **core** - here goes the code that is common between multiple features. an example is domain data objects
+- **dart** - here goes all the code relevant to the dart logic, mainly all the different engines that power different game modes
+- **database** - here goes all the code needed for database interactions such as orm logic and entities

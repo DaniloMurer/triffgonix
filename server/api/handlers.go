@@ -3,13 +3,14 @@ package handlers
 import (
 	"net/http"
 	"server/core/domain"
-	"server/core/engine"
+	engine2 "server/dart/engine"
+	"server/dart/engine/x01"
 	"server/database"
 
 	"github.com/gin-gonic/gin"
 )
 
-var games []engine.Game
+var games []engine2.Game
 
 func CreatePlayer(c *gin.Context) {
 	player := domain.Player{Id: 0, PlayerName: "test"}
@@ -24,6 +25,6 @@ func GetPlayers(c *gin.Context) {
 
 func CreateGame(c *gin.Context) {
 	// TODO: implement game creation through post request
-	game := engine.Game{Name: "test", Engine: &engine.X01Engine{}}
+	game := engine2.Game{Name: "test", Engine: x01.New(301)}
 	games = append(games, game)
 }

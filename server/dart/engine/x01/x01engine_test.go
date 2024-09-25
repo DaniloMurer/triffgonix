@@ -1,15 +1,16 @@
-package engine
+package x01
 
 import (
 	"fmt"
 	"server/core/domain"
+	"server/dart/engine"
 	"testing"
 )
 
 func TestX01Engine_RegisterThrow(t *testing.T) {
-	player := Player{Value: &domain.Player{Id: 1}, Turns: []Turn{}}
+	player := engine.Player{Value: &domain.Player{Id: 1}, Turns: []engine.Turn{}}
 
-	game := Game{Engine: &X01Engine{StartingScore: 301}, Players: &Players{}}
+	game := engine.Game{Engine: New(301), Players: &engine.Players{}}
 
 	throw := domain.Throw{Id: 1, Points: 5, Multiplicator: 1, PlayerId: player.Value.Id}
 	game.Players.Add(&player)
@@ -25,9 +26,9 @@ func TestX01Engine_RegisterThrow(t *testing.T) {
 }
 
 func TestPlayers_Add(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -58,9 +59,9 @@ func TestPlayers_Add(t *testing.T) {
 }
 
 func TestX01Engine_RegisterThrow_SwitchPlayer(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -96,9 +97,9 @@ func TestX01Engine_RegisterThrow_SwitchPlayer(t *testing.T) {
 }
 
 func TestX01Engine_CalculatePlayerScore(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -129,9 +130,9 @@ func TestX01Engine_CalculatePlayerScore(t *testing.T) {
 }
 
 func TestX01Engine_RegisterThrow_CorrectTurnsAmount(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -144,7 +145,7 @@ func TestX01Engine_RegisterThrow_CorrectTurnsAmount(t *testing.T) {
 	game.Engine.RegisterThrow(&throw2, game.Players)
 	game.Engine.RegisterThrow(&throw3, game.Players)
 
-	var playerTurns []Turn
+	var playerTurns []engine.Turn
 	for _, turn := range game.Players.GetPreviousPlayer().Turns {
 		playerTurns = append(playerTurns, turn)
 	}
@@ -157,7 +158,7 @@ func TestX01Engine_RegisterThrow_CorrectTurnsAmount(t *testing.T) {
 	game.Engine.RegisterThrow(&throw2, game.Players)
 	game.Engine.RegisterThrow(&throw3, game.Players)
 
-	var player2Turns []Turn
+	var player2Turns []engine.Turn
 	for _, turn := range game.Players.GetPreviousPlayer().Turns {
 		player2Turns = append(player2Turns, turn)
 	}
@@ -170,7 +171,7 @@ func TestX01Engine_RegisterThrow_CorrectTurnsAmount(t *testing.T) {
 	game.Engine.RegisterThrow(&throw2, game.Players)
 	game.Engine.RegisterThrow(&throw3, game.Players)
 
-	var player1Turns2 []Turn
+	var player1Turns2 []engine.Turn
 	for _, turn := range game.Players.GetPreviousPlayer().Turns {
 		player1Turns2 = append(player1Turns2, turn)
 	}
@@ -181,9 +182,9 @@ func TestX01Engine_RegisterThrow_CorrectTurnsAmount(t *testing.T) {
 }
 
 func TestX01Engine_HasAnyPlayerWon(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 301}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 0}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 301}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 0}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -195,9 +196,9 @@ func TestX01Engine_HasAnyPlayerWon(t *testing.T) {
 }
 
 func TestX01Engine_HasAnyPlayerWon_AfterThrows(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 2}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 2}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -238,8 +239,8 @@ func TestX01Engine_HasAnyPlayerWon_AfterThrows(t *testing.T) {
 }
 
 func TestX01Engine_UndoThrow(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 
@@ -261,9 +262,9 @@ func TestX01Engine_UndoThrow(t *testing.T) {
 }
 
 func TestX01Engine_UndoThrow_WhenSecondPlayerTurn(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 2}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 34}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 2}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -304,9 +305,9 @@ func TestX01Engine_UndoThrow_WhenSecondPlayerTurn(t *testing.T) {
 }
 
 func TestX01Engine_OverThrow_Scenario(t *testing.T) {
-	player := Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 0}, Turns: []Turn{}}
-	player2 := Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 0}, Turns: []Turn{}}
-	game := Game{Players: &Players{}, Engine: &X01Engine{StartingScore: 301}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 0}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 0}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
 
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
@@ -329,5 +330,54 @@ func TestX01Engine_OverThrow_Scenario(t *testing.T) {
 	}
 	if game.Players.CurrentPlayer.Value.Id != player.Value.Id {
 		t.Fatalf("ERROR: expected player one to be current player after overthrow")
+	}
+
+	throw5 := domain.Throw{Id: 1, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw6 := domain.Throw{Id: 2, Points: 302, Multiplicator: 1, PlayerId: player.Value.Id}
+
+	game.Engine.RegisterThrow(&throw5, game.Players)
+	game.Engine.RegisterThrow(&throw6, game.Players)
+	if player.Turns[1].Sum() != 1 {
+		t.Fatalf("ERROR: expected player one on a overthrow to have one point in turn. instead got: %d", player.Turns[1].Sum())
+	}
+	if game.Players.CurrentPlayer.Value.Id != player2.Value.Id {
+		t.Fatalf("ERROR: expected player two to be the current player")
+	}
+}
+
+func TestX01Engine_OverThrow_NoSpaceInTurnScenario(t *testing.T) {
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 0}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 0}, Turns: []engine.Turn{}}
+	game := engine.Game{Players: &engine.Players{}, Engine: New(301)}
+
+	game.Players.Add(&player)
+	game.Players.Add(&player2)
+
+	throw := domain.Throw{Id: 1, Points: 298, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw2 := domain.Throw{Id: 2, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+	throw3 := domain.Throw{Id: 3, Points: 1, Multiplicator: 1, PlayerId: player.Value.Id}
+
+	game.Engine.RegisterThrow(&throw, game.Players)
+	game.Engine.RegisterThrow(&throw2, game.Players)
+	game.Engine.RegisterThrow(&throw3, game.Players)
+
+	throw4 := domain.Throw{Id: 4, Points: 1, Multiplicator: 1, PlayerId: player2.Value.Id}
+	throw5 := domain.Throw{Id: 3, Points: 1, Multiplicator: 1, PlayerId: player2.Value.Id}
+	throw6 := domain.Throw{Id: 3, Points: 1, Multiplicator: 1, PlayerId: player2.Value.Id}
+
+	game.Engine.RegisterThrow(&throw4, game.Players)
+	game.Engine.RegisterThrow(&throw5, game.Players)
+	game.Engine.RegisterThrow(&throw6, game.Players)
+
+	throw7 := domain.Throw{Id: 3, Points: 4, Multiplicator: 1, PlayerId: player.Value.Id}
+	game.Engine.RegisterThrow(&throw7, game.Players)
+
+	if game.Players.CurrentPlayer.Value.Id != player2.Value.Id {
+		t.Fatalf("ERROR: expected player one to be the current player")
+	}
+
+	if player.Turns[1].Sum() != 0 {
+		t.Fatalf("ERROR: expected player one on a overthrow to have a zero points in turn. instead got: %d",
+			player.Turns[1].Sum())
 	}
 }
