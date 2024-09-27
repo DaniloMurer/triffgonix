@@ -25,6 +25,10 @@ func main() {
 		api.POST("/user", handlers.CreatePlayer)
 		api.GET("/user", handlers.GetPlayers)
 	}
+	webSocket := router.Group("/ws")
+	{
+		webSocket.GET("/dart/:gameId", handlers.HandleDartWebSocket)
+	}
 
 	err := router.Run("0.0.0.0:8080")
 	if err != nil {

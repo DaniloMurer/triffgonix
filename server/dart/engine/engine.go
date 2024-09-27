@@ -169,6 +169,5 @@ func (turn *Turn) ThrowCount() int16 {
 type Game struct {
 	Name    string
 	Players *Players
-	Throws  *[]domain.Throw
 	Engine  Engine
 }
