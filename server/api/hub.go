@@ -31,3 +31,5 @@ func (hub *Hub) BroadcastMessage(message interface{}) {
 		client.Connection.WriteJSON(message)
 	}
 }
+
+// TODO: implement function for handling websocket messages in a loop. will be called as goroutine

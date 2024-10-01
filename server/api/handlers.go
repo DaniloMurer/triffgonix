@@ -20,6 +20,9 @@ var (
 
 func HandleDartWebSocket(c *gin.Context) {
 	// TODO: make all this concurrent using goroutines for blazingly fast performance
+	// i think the easiest way would be, having a function on the hub for handling the connections.
+	// inside that function, the loop will run handling the events. the function itself can be
+	// called as a goroutine, thus making it multithreaded by nature. and is rather strightforward to implement
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		panic("error while upgrading to websocket protocol")
