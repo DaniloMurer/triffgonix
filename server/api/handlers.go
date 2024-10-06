@@ -19,38 +19,32 @@ var (
 )
 
 func HandleDartWebSocket(c *gin.Context) {
-	// TODO: make all this concurrent using goroutines for blazingly fast performance
-	// i think the easiest way would be, having a function on the hub for handling the connections.
-	// inside that function, the loop will run handling the events. the function itself can be
-	// called as a goroutine, thus making it multithreaded by nature. and is rather strightforward to implement
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		panic("error while upgrading to websocket protocol")
 	}
-	defer conn.Close()
 	mockCreateGame()
 	gameId := c.Param("gameId")
-	for {
-		var message dto.Message
-		err := conn.ReadJSON(&message)
-		if err != nil {
-			log.Printf("error: %+v", err)
-		}
-		switch *message.Type {
-		case dto.Handshake:
-			hub, exists := hubs[gameId]
-			if exists {
-				hub.RegsiterNewClient(conn)
-			} else {
-				hub = Hub{Id: gameId, Clients: map[*Client]bool{}, Game: mockCreateGame()}
-				hub.RegsiterNewClient(conn)
-				hubs[gameId] = hub
-			}
-		case dto.Throw:
-			hub := hubs[gameId]
-			hub.BroadcastMessage(hub.Game)
+	// get message from socket
+	var message dto.Message
+	err = conn.ReadJSON(&message)
+	if err != nil {
+		log.Printf("error: %+v", err)
+	}
+	// if a new handshake is made, register client in the correct hub. if no hub exists, create one
+	switch *message.Type {
+	case dto.Handshake:
+		hub, exists := hubs[gameId]
+		if exists {
+			hub.RegisterNewClient(conn)
+		} else {
+			hub = Hub{Id: gameId, Clients: map[*Client]bool{}, Game: mockCreateGame()}
+			hub.RegisterNewClient(conn)
+			hubs[gameId] = hub
 		}
 	}
+	hub := hubs[gameId]
+	go hub.HandleConnection(conn)
 }
 
 func CreatePlayer(c *gin.Context) {
@@ -75,11 +69,15 @@ func CreateGame(c *gin.Context) {
 }
 
 func mockCreateGame() engine.Game {
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
 	// create new game
 	game := engine.Game{
 		Name:    "test",
 		Players: &engine.Players{},
 		Engine:  x01.New(301),
 	}
+	game.Players.Add(&player)
+	game.Players.Add(&player2)
 	return game
 }

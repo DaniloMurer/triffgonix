@@ -5,7 +5,7 @@ import "server/database"
 type Player struct {
 	Id         uint   `json:"id"`
 	PlayerName string `json:"playerName"`
-	Score      int16  `json:"-"`
+	Score      int16  `json:"score"`
 }
 
 func (self *Player) ToPlayerEntity() *database.Player {
