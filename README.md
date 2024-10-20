@@ -54,13 +54,14 @@ the backend has unit tests, crazy right? at the moment i mainly use unit tests t
 
 ```bash
 cd server
-go test server/core/engine
+go test ./...
 ```
 
 you can even get a testing coverage for the package using following commands instead:
 
 ```bash
-go test server/core/engine -coverprofile cover.out
+cd server
+go test ./... -coverprofile cover.out
 go tool cover -html=cover.out
 ```
 

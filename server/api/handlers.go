@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"server/api/dto"
 	"server/core/domain"
 	"server/dart/engine"
 	"server/dart/engine/x01"
 	"server/database"
+	"server/logger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -18,10 +18,13 @@ var (
 	hubs     = map[string]Hub{}
 )
 
+var LOGGER logger.Logger = logger.NewLogger()
+
 func HandleDartWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		panic("error while upgrading to websocket protocol")
+		LOGGER.Error("error while upgrading request to websocket protocol: %v", err)
+		return
 	}
 	mockCreateGame()
 	gameId := c.Param("gameId")
@@ -29,7 +32,8 @@ func HandleDartWebSocket(c *gin.Context) {
 	var message dto.Message
 	err = conn.ReadJSON(&message)
 	if err != nil {
-		log.Printf("error: %+v", err)
+		LOGGER.Error("error while reading from socket connection: %v", err)
+		return
 	}
 	// if a new handshake is made, register client in the correct hub. if no hub exists, create one
 	switch *message.Type {
