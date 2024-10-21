@@ -18,12 +18,12 @@ var (
 	hubs     = map[string]Hub{}
 )
 
-var LOGGER logger.Logger = logger.NewLogger()
+var logg logger.Logger = logger.NewLogger()
 
 func HandleDartWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		LOGGER.Error("error while upgrading request to websocket protocol: %v", err)
+		logg.Error("error while upgrading request to websocket protocol: %v", err)
 		return
 	}
 	mockCreateGame()
@@ -32,7 +32,7 @@ func HandleDartWebSocket(c *gin.Context) {
 	var message dto.Message
 	err = conn.ReadJSON(&message)
 	if err != nil {
-		LOGGER.Error("error while reading from socket connection: %v", err)
+		logg.Error("error while reading from socket connection: %v", err)
 		return
 	}
 	// if a new handshake is made, register client in the correct hub. if no hub exists, create one
@@ -47,8 +47,12 @@ func HandleDartWebSocket(c *gin.Context) {
 			hubs[gameId] = hub
 		}
 	}
-	hub := hubs[gameId]
-	go hub.HandleConnection(conn)
+	hub, exists := hubs[gameId]
+	if exists {
+		go hub.HandleConnection(conn)
+	} else {
+		conn.Close()
+	}
 }
 
 func CreatePlayer(c *gin.Context) {

@@ -25,10 +25,10 @@ type Engine interface {
 }
 
 type Player struct {
-	Value    *domain.Player `json:"value,omitempty"`
-	Previous *Player        `json:"previous,omitempty"`
-	Next     *Player        `json:"next,omitempty"`
-	Turns    []Turn         `json:"turns,omitempty"`
+	Value    *domain.Player
+	Previous *Player
+	Next     *Player
+	Turns    []Turn
 }
 
 // GetAverarePoints gets average points scored across all turns from player
@@ -39,14 +39,17 @@ func (player *Player) GetAverarePoints() int16 {
 		averagePoints += turn.Sum()
 		throwCount += turn.ThrowCount()
 	}
+	if throwCount == 0 {
+		return 0
+	}
 	return averagePoints / throwCount
 }
 
 // Players is a linked list of the players in a given game
 type Players struct {
-	Head          *Player `json:"head,omitempty"`
-	CurrentPlayer *Player `json:"CurrentPlayer,omitempty"`
-	Tail          *Player `json:"tailomitempty"`
+	Head          *Player
+	CurrentPlayer *Player
+	Tail          *Player
 }
 
 // Add adds new player to the linked list
@@ -99,7 +102,9 @@ func (players *Players) ToDto() dto.Players {
 	var domainPlayers []domain.Player
 	currentNode := players.Head
 	for currentNode != nil {
-		domainPlayers = append(domainPlayers, *currentNode.Value)
+		domainPlayer := *currentNode.Value
+		domainPlayer.AveragePoints = currentNode.GetAverarePoints()
+		domainPlayers = append(domainPlayers, domainPlayer)
 		currentNode = currentNode.Next
 	}
 	dtoPlayers.AllPlayers = domainPlayers

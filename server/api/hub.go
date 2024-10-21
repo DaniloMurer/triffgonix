@@ -43,7 +43,9 @@ func (hub *Hub) HandleConnection(conn *websocket.Conn) {
 		var message dto.Message
 		err := conn.ReadJSON(&message)
 		if err != nil {
-			log.Error("error occured while reading json: %+v", err)
+			log.Warn("error occured while reading json: %+v", err)
+			conn.Close()
+			return
 		}
 		switch *message.Type {
 		case dto.Throw:

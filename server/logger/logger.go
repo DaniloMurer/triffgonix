@@ -16,6 +16,7 @@ const (
 	DEBUG Level = "DEBUG"
 )
 
+// TODO: set desired logging level via env variable. e.g no trace logs when production
 type Logger struct {
 	Logger *log.Logger
 }
