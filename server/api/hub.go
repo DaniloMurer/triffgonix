@@ -30,7 +30,7 @@ func (hub *Hub) RegisterNewClient(conn *websocket.Conn) {
 }
 
 // broadcastMessage sends given message to all clients connected to the hub
-func (hub *Hub) broadcastMessage(message engine.Players) {
+func (hub *Hub) broadcastMessage(message interface{}) {
 	log.Trace("message to broadcast: %+v", message)
 	for client := range hub.Clients {
 		client.Connection.WriteJSON(message)
@@ -47,11 +47,12 @@ func (hub *Hub) HandleConnection(conn *websocket.Conn) {
 		}
 		switch *message.Type {
 		case dto.Throw:
+			// FIXME: seems to be a bug with the websocket handling, where the current player switch doesnt happen after every throw
 			hub.Game.Engine.RegisterThrow(&domain.Throw{Points: 1, Multiplicator: 1}, hub.Game.Players)
-			hub.broadcastMessage(*hub.Game.Players)
+			hub.broadcastMessage(hub.Game.Players.ToDto())
 		case dto.UndoThrow:
 			hub.Game.Engine.UndoLastThrow(hub.Game.Players)
-			hub.broadcastMessage(*hub.Game.Players)
+			hub.broadcastMessage(hub.Game.Players.ToDto())
 		default:
 			log.Trace("some other message type received: %s", *message.Type)
 		}

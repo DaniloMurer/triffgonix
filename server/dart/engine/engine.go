@@ -1,8 +1,12 @@
 package engine
 
 import (
+	"server/api/dto"
 	"server/core/domain"
+	"server/logger"
 )
+
+var log logger.Logger = logger.NewLogger()
 
 type Engine interface {
 	// FIXME: i think for the future it would make sense to have a way to tell if certain points can be made.
@@ -88,6 +92,21 @@ func (players *Players) GetPreviousPlayer() *Player {
 		previousPlayer = players.Tail
 	}
 	return previousPlayer
+}
+
+func (players *Players) ToDto() dto.Players {
+	log.Trace("running to dto of players")
+	dtoPlayers := dto.Players{}
+	var domainPlayers []domain.Player
+	currentNode := players.Head
+	for currentNode != nil {
+		domainPlayers = append(domainPlayers, *currentNode.Value)
+		currentNode = currentNode.Next
+	}
+	dtoPlayers.AllPlayers = domainPlayers
+	dtoPlayers.CurrentPlayer = *players.CurrentPlayer.Value
+	log.Trace("run dto conversion with following result: %+v", dtoPlayers)
+	return dtoPlayers
 }
 
 type Turn struct {

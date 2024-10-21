@@ -73,8 +73,8 @@ func CreateGame(c *gin.Context) {
 }
 
 func mockCreateGame() engine.Game {
-	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
-	player2 := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1}, Turns: []engine.Turn{}}
+	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 301}, Turns: []engine.Turn{}}
+	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 301}, Turns: []engine.Turn{}}
 	// create new game
 	game := engine.Game{
 		Name:    "test",
