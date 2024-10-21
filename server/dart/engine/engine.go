@@ -21,10 +21,10 @@ type Engine interface {
 }
 
 type Player struct {
-	Value    *domain.Player
-	Previous *Player
-	Next     *Player
-	Turns    []Turn
+	Value    *domain.Player `json:"value,omitempty"`
+	Previous *Player        `json:"previous,omitempty"`
+	Next     *Player        `json:"next,omitempty"`
+	Turns    []Turn         `json:"turns,omitempty"`
 }
 
 // GetAverarePoints gets average points scored across all turns from player
@@ -40,9 +40,9 @@ func (player *Player) GetAverarePoints() int16 {
 
 // Players is a linked list of the players in a given game
 type Players struct {
-	Head          *Player
-	CurrentPlayer *Player
-	Tail          *Player
+	Head          *Player `json:"head,omitempty"`
+	CurrentPlayer *Player `json:"CurrentPlayer,omitempty"`
+	Tail          *Player `json:"tailomitempty"`
 }
 
 // Add adds new player to the linked list
