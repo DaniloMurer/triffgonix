@@ -95,7 +95,6 @@ func (players *Players) GetPreviousPlayer() *Player {
 }
 
 func (players *Players) ToDto() dto.Players {
-	log.Trace("running to dto of players")
 	dtoPlayers := dto.Players{}
 	var domainPlayers []domain.Player
 	currentNode := players.Head
@@ -105,7 +104,6 @@ func (players *Players) ToDto() dto.Players {
 	}
 	dtoPlayers.AllPlayers = domainPlayers
 	dtoPlayers.CurrentPlayer = *players.CurrentPlayer.Value
-	log.Trace("run dto conversion with following result: %+v", dtoPlayers)
 	return dtoPlayers
 }
 

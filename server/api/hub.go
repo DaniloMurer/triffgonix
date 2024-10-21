@@ -47,7 +47,6 @@ func (hub *Hub) HandleConnection(conn *websocket.Conn) {
 		}
 		switch *message.Type {
 		case dto.Throw:
-			// FIXME: seems to be a bug with the websocket handling, where the current player switch doesnt happen after every throw
 			hub.Game.Engine.RegisterThrow(&domain.Throw{Points: 1, Multiplicator: 1}, hub.Game.Players)
 			hub.broadcastMessage(hub.Game.Players.ToDto())
 		case dto.UndoThrow:
