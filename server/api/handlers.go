@@ -7,7 +7,7 @@ import (
 	"server/dart/engine"
 	"server/dart/engine/x01"
 	"server/database"
-	"server/logger"
+	"server/logging"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -18,12 +18,12 @@ var (
 	hubs     = map[string]Hub{}
 )
 
-var logg logger.Logger = logger.NewLogger()
+var logger logging.Logger = logging.NewLogger()
 
 func HandleDartWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		logg.Error("error while upgrading request to websocket protocol: %v", err)
+		logger.Error("error while upgrading request to websocket protocol: %v", err)
 		return
 	}
 	mockCreateGame()
@@ -32,7 +32,7 @@ func HandleDartWebSocket(c *gin.Context) {
 	var message dto.Message
 	err = conn.ReadJSON(&message)
 	if err != nil {
-		logg.Error("error while reading from socket connection: %v", err)
+		logger.Error("error while reading from socket connection: %v", err)
 		return
 	}
 	// if a new handshake is made, register client in the correct hub. if no hub exists, create one
@@ -67,6 +67,13 @@ func GetPlayers(c *gin.Context) {
 }
 
 func CreateGame(c *gin.Context) {
+	var newGame dto.Game
+	err := c.BindJSON(newGame)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
 	// TODO: implement game creation through post request
 	/*game := engine.Game{
 		Name:    "test",

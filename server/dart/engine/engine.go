@@ -3,10 +3,10 @@ package engine
 import (
 	"server/api/dto"
 	"server/core/domain"
-	"server/logger"
+	"server/logging"
 )
 
-var log logger.Logger = logger.NewLogger()
+var logger logging.Logger = logging.NewLogger()
 
 type Engine interface {
 	// FIXME: i think for the future it would make sense to have a way to tell if certain points can be made.

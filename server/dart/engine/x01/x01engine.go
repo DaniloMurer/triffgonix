@@ -3,10 +3,10 @@ package x01
 import (
 	"server/core/domain"
 	"server/dart/engine"
-	"server/logger"
+	"server/logging"
 )
 
-var log = logger.NewLogger()
+var logger = logging.NewLogger()
 
 type X01Engine struct {
 	StartingScore int16
@@ -127,7 +127,7 @@ func (x01Engine *X01Engine) checkForOverThrow(throw *domain.Throw, player *engin
 	}
 	tempScore += throw.Points * throw.Multiplicator
 	if (x01Engine.StartingScore - tempScore) < 0 {
-		log.Trace("trace: overthrown: %d", x01Engine.StartingScore-tempScore)
+		logger.Trace("trace: overthrown: %d", x01Engine.StartingScore-tempScore)
 		return true
 	}
 	return false
