@@ -21,6 +21,10 @@ var (
 var logger logging.Logger = logging.NewLogger()
 
 func HandleDartWebSocket(c *gin.Context) {
+	// FIXME: only temporary
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		logger.Error("error while upgrading request to websocket protocol: %v", err)
