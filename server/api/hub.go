@@ -14,7 +14,7 @@ type Client struct {
 }
 
 type Hub struct {
-	Id      string
+	Id      uint
 	Clients map[*Client]bool
 	Game    engine.Game
 }

@@ -8,6 +8,7 @@ import (
 	"server/dart/engine/x01"
 	"server/database"
 	"server/logging"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -45,10 +46,6 @@ func HandleDartWebSocket(c *gin.Context) {
 		hub, exists := hubs[gameId]
 		if exists {
 			hub.RegisterNewClient(conn)
-		} else {
-			hub = Hub{Id: gameId, Clients: map[*Client]bool{}, Game: mockCreateGame()}
-			hub.RegisterNewClient(conn)
-			hubs[gameId] = hub
 		}
 	}
 	hub, exists := hubs[gameId]
@@ -60,7 +57,7 @@ func HandleDartWebSocket(c *gin.Context) {
 }
 
 func CreatePlayer(c *gin.Context) {
-	player := domain.Player{Id: 0, PlayerName: "test"}
+	player := domain.Player{Id: 0, PlayerName: "test2"}
 	database.CreatePlayer(player.ToPlayerEntity())
 	c.JSON(http.StatusAccepted, gin.H{"text": "hello"})
 }
@@ -72,19 +69,39 @@ func GetPlayers(c *gin.Context) {
 
 func CreateGame(c *gin.Context) {
 	var newGame dto.Game
-	err := c.BindJSON(newGame)
+	err := c.BindJSON(&newGame)
 	if err != nil {
+		logger.Error("error while binding json: %+v", err)
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	logger.Trace("new game to be saved: %+v", &newGame)
+	err, savedGame := database.CreateGame(newGame.ToEntity())
+	if err != nil {
+		logger.Error("error while saving game to the databse: %+v", err)
 		c.Status(http.StatusInternalServerError)
 		return
 	}
 
-	// TODO: implement game creation through post request
-	/*game := engine.Game{
-		Name:    "test",
-		Players: &engine.Players{},
-		Engine:  x01.New(301),
+	// create new game and hub
+	players := engine.Players{}
+	for _, player := range newGame.Players {
+		players.Add(&engine.Player{Value: player.ToDomain()})
 	}
-	games["201"] = game*/
+	game := engine.Game{
+		Name:    newGame.Name,
+		Players: &players,
+		Engine:  x01.New(newGame.StartingScore),
+	}
+	newHub := Hub{Id: savedGame.Id, Clients: map[*Client]bool{}, Game: game}
+	hubs[strconv.FormatUint(uint64(savedGame.Id), 10)] = newHub
+
+	c.JSON(http.StatusCreated, &savedGame)
+}
+
+func GetGames(c *gin.Context) {
+	games := database.FindAllGames()
+	c.JSON(http.StatusFound, &games)
 }
 
 func mockCreateGame() engine.Game {

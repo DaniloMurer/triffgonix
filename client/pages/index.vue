@@ -26,9 +26,41 @@ onMounted(() => {
     const data = JSON.parse(evt.data);
     messages.value = data.currentPlayer.score;
   }
+
+  const newGame = {
+    name: "testico",
+    gameMode: "x01",
+    startingScore: 401,
+    players: [
+      { Id: 1, name: "test" },
+      { Id: 1, name: "test" }
+    ]
+  }
 })
+
+const onCreateGame = function () {
+  const newGame = {
+    name: "testico",
+    gameMode: "x01",
+    startingScore: 401,
+    players: [
+      { Id: 1, name: "test" },
+      { Id: 2, name: "test2" }
+    ]
+  }
+
+  fetch('http://localhost:8080/api/game', {
+    method: 'POST',
+    body: JSON.stringify(newGame)
+  }).then(response => {
+    response.json()
+  }).then(data => {
+    console.log(data)
+  })
+}
 </script>
 <template>
   <h1 class="text-center">Hello world</h1>
   <span>{{ messages }}</span>
+  <button class="btn-primary btn" v-on:click="onCreateGame" />
 </template>

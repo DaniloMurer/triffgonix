@@ -1,6 +1,8 @@
 package domain
 
-import "server/database"
+import (
+	"server/database"
+)
 
 type Player struct {
 	Id            uint   `json:"id"`

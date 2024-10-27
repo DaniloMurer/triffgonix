@@ -17,7 +17,7 @@ func openDatabaseConnection() {
 
 func AutoMigrate() {
 	openDatabaseConnection()
-	err := database.AutoMigrate(&Player{})
+	err := database.AutoMigrate(&Player{}, &Game{})
 	if err != nil {
 		panic("cannot migrate schema to database")
 	}
@@ -29,8 +29,28 @@ func FindAllUsers() []Player {
 	return users
 }
 
-func CreatePlayer(player *Player) {
-	database.Save(player)
+func CreatePlayer(player *Player) (error, *Player) {
+	var err error
+	result := database.Save(player)
+	if result.Error != nil {
+		err = result.Error
+	}
+	return err, player
+}
+
+func FindAllGames() []Game {
+	var games []Game
+	database.Find(&games)
+	return games
+}
+
+func CreateGame(game *Game) (error, *Game) {
+	result := database.Save(game)
+	var err error
+	if result.Error != nil {
+		err = result.Error
+	}
+	return err, game
 }
 
 func CreateDummyUser() {

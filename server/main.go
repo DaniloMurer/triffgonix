@@ -24,6 +24,8 @@ func main() {
 	{
 		api.POST("/user", handlers.CreatePlayer)
 		api.GET("/user", handlers.GetPlayers)
+		api.POST("/game", handlers.CreateGame)
+		api.GET("/game", handlers.GetGames)
 	}
 	webSocket := router.Group("/ws")
 	{
