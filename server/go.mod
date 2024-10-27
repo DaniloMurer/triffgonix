@@ -8,7 +8,10 @@ require github.com/gin-contrib/cors v1.7.2
 
 require gorm.io/gorm v1.25.11
 
-require gorm.io/driver/sqlite v1.5.6
+require (
+	github.com/gorilla/websocket v1.5.3
+	gorm.io/driver/sqlite v1.5.6
+)
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect
@@ -21,7 +24,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

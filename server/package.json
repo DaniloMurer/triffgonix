@@ -1,0 +1,13 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install": "go mod tidy",
+    "start": "go run main.go",
+    "build": "go build",
+    "test": "go test ./...",
+    "test:coverage": "go test ./... -coverprofile cover.out && go tool cover -html=cover.out"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "triffgonix",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "server/",
+    "client/"
+  ],
+  "scripts": {
+    "install:dependencies": "yarn workspace server install",
+    "start:dev": "concurrently \"yarn workspace client dev\" \"yarn workspace server start\"",
+    "server": "yarn workspace server",
+    "client": "yarn workspace client",
+    "server:test": "yarn workspace server test",
+    "server:coverage": "yarn workspace server test:coverage"
+  },
+  "packageManager": "yarn@4.5.1",
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

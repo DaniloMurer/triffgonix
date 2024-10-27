@@ -14,6 +14,16 @@ the real-time functionality will, at least so i think, be implemented using web 
 
 ## setup
 
+install needed dependencies and yarn workspace setup:
+
+```bash
+# install node dependencies and sets up yarn workspaces as well as installing yarn package manager
+yarn install
+
+# installs go dependencies
+yarn install:dependencies
+```
+
 ### tools
 
 this project is made with the **GONUTS** stack (yeah i know, really creative right?)
@@ -28,24 +38,10 @@ this means to run triffgonix you need a node environment and have go installed o
 
 ### run project
 
-to run the project, you need to start the nuxt frontend and go backend.
-
-install the client dependencies and run the client:
+to run the project, you need to start the nuxt frontend and go backend:
 
 ```bash
-cd client
-yarn install
-yarn dev
-```
-
-if you're not using yarn as the node package manager, use npm instead. should work just fine.
-
-then you can install the server dependencies and run the server:
-
-```bash
-cd server
-go mod tidy
-go run main.go
+yarn start:dev
 ```
 
 ### server tests
@@ -53,16 +49,13 @@ go run main.go
 the backend has unit tests, crazy right? at the moment i mainly use unit tests to develop and assure functionality of the engine package. you can run those tests using following command:
 
 ```bash
-cd server
-go test ./...
+yarn server:test
 ```
 
 you can even get a testing coverage for the package using following commands instead:
 
 ```bash
-cd server
-go test ./... -coverprofile cover.out
-go tool cover -html=cover.out
+yarn server:coverage
 ```
 
 this will open the code coverage in your default browser.
@@ -75,3 +68,4 @@ the server code is structured in following "features":
 - **core** - here goes the code that is common between multiple features. an example is domain data objects
 - **dart** - here goes all the code relevant to the dart logic, mainly all the different engines that power different game modes
 - **database** - here goes all the code needed for database interactions such as orm logic and entities
+- **logging** - here goes the logger implementation

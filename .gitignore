@@ -1,5 +1,5 @@
 *.db
-
+.yarn
 # Nuxt dev/build outputs
 **/.output
 **/.data
