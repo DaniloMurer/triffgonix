@@ -28,10 +28,24 @@ func (hub *Hub) RegisterNewClient(conn *websocket.Conn) {
 
 // broadcastMessage sends given message to all clients connected to the hub
 func (hub *Hub) broadcastMessage(message dto.Players) {
-	logger.Trace("message to broadcast: %+v", message)
 	for client := range hub.Clients {
-		client.Connection.WriteJSON(message)
+		err := client.Connection.WriteJSON(message)
+		if err != nil {
+			logger.Error("error while sending message to client", err)
+		}
 	}
+}
+
+func (hub *Hub) BroadcastToClients(obj interface{}) []error {
+	var errors []error
+	for client := range hub.Clients {
+		err := client.Connection.WriteJSON(obj)
+		if err != nil {
+			logger.Error("error while broadcasting to client: %+v", err)
+			errors = append(errors, err)
+		}
+	}
+	return errors
 }
 
 func (hub *Hub) HandleConnection(conn *websocket.Conn) {

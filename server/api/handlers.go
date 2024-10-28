@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"server/api/dto"
-	"server/core/domain"
 	"server/dart/engine"
 	"server/dart/engine/x01"
 	"server/database"
@@ -32,7 +31,6 @@ func HandleDartWebSocket(c *gin.Context) {
 		logger.Error("error while upgrading request to websocket protocol: %v", err)
 		return
 	}
-	mockCreateGame()
 	gameId := c.Param("gameId")
 	// get message from socket
 	var message dto.Message
@@ -58,9 +56,20 @@ func HandleDartWebSocket(c *gin.Context) {
 }
 
 func CreatePlayer(c *gin.Context) {
-	player := domain.Player{Id: 0, PlayerName: "test2"}
-	database.CreatePlayer(player.ToPlayerEntity())
-	c.JSON(http.StatusAccepted, gin.H{"text": "hello"})
+	var player dto.Player
+	err := c.BindJSON(&player)
+	if err != nil {
+		logger.Error("error while parsing player json")
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	err, newPlayer := database.CreatePlayer(player.ToEntity())
+	if err != nil {
+		logger.Error("error while saving player to database: %+v", err)
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusCreated, &newPlayer)
 }
 
 func GetPlayers(c *gin.Context) {
@@ -105,18 +114,12 @@ func GetGames(c *gin.Context) {
 	c.JSON(http.StatusFound, &games)
 }
 
-func mockCreateGame() engine.Game {
-	player := engine.Player{Value: &domain.Player{PlayerName: "1", Id: 1, Score: 301}, Turns: []engine.Turn{}}
-	player2 := engine.Player{Value: &domain.Player{PlayerName: "2", Id: 2, Score: 301}, Turns: []engine.Turn{}}
-	// create new game
-	game := engine.Game{
-		Name:    "test",
-		Players: &engine.Players{},
-		Engine:  x01.New(301),
+func broadcastNewGame(newGame *database.Game) {
+	game := dto.Game{}
+	game.FromEntity(newGame)
+	for _, hub := range hubs {
+		hub.BroadcastToClients(game)
 	}
-	game.Players.Add(&player)
-	game.Players.Add(&player2)
-	return game
 }
 
 // cleanupHubs removes hubs with zero clients connected to it

@@ -11,16 +11,17 @@ type Players struct {
 }
 
 type Game struct {
+	Id            uint     `json:"id"`
 	Name          string   `json:"name"`
 	GameMode      string   `json:"gameMode"`
 	StartingScore int16    `json:"startingScore"`
 	Players       []Player `json:"players"`
 }
 
-func (self Game) ToEntity() *database.Game {
+func (self *Game) ToEntity() *database.Game {
 	var players []database.Player
 	for _, player := range self.Players {
-		players = append(players, player.ToEntity())
+		players = append(players, *player.ToEntity())
 	}
 	return &database.Game{
 		Name:    self.Name,
@@ -28,13 +29,23 @@ func (self Game) ToEntity() *database.Game {
 	}
 }
 
+func (self *Game) FromEntity(game *database.Game) {
+	var players []Player
+	for _, player := range game.Players {
+		players = append(players, Player{Id: player.Id, Name: player.PlayerName})
+	}
+	self.Id = game.Id
+	self.Name = game.Name
+	self.Players = players
+}
+
 type Player struct {
 	Id   uint   `json:"id"`
 	Name string `json:"name"`
 }
 
-func (self Player) ToEntity() database.Player {
-	return database.Player{
+func (self Player) ToEntity() *database.Player {
+	return &database.Player{
 		Model:      database.Model{Id: self.Id},
 		PlayerName: self.Name,
 	}
