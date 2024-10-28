@@ -1,22 +1,14 @@
 <script setup>
+import { Game, HandshakeContent, Player, SocketMessage, ThrowContent } from '~/common/data';
+
 
 const messages = ref()
 
 onMounted(() => {
   const socket = connectToSocket('201');
   socket.onopen = () => {
-    const handshake = {
-      type: "handshake",
-      data: {
-        content: "data"
-      }
-    };
-    const throw1 = {
-      type: "throw",
-      data: {
-        content: "data"
-      }
-    };
+    const handshake = new SocketMessage('handshake', new HandshakeContent());
+    const throw1 = new SocketMessage('throw', new ThrowContent(12, 1));
     socket.send(JSON.stringify(handshake));
     console.log("conneted to websocket");
     socket.send(JSON.stringify(throw1));
@@ -26,32 +18,18 @@ onMounted(() => {
     const data = JSON.parse(evt.data);
     messages.value = data.currentPlayer.score;
   }
-
-  const newGame = {
-    name: "testico",
-    gameMode: "x01",
-    startingScore: 401,
-    players: [
-      { Id: 1, name: "test" },
-      { Id: 1, name: "test" }
-    ]
-  }
 })
 
 const onCreateGame = function () {
-  const newGame = {
-    name: "testico",
-    gameMode: "x01",
-    startingScore: 401,
-    players: [
-      { Id: 1, name: "test" },
-      { Id: 2, name: "test2" }
-    ]
-  }
+  const players = [
+    new Player(1, 'test'),
+    new Player(2, 'test2')
+  ];
+  const game = new Game('testico', 'x01', 401, players);
 
   fetch('http://localhost:8080/api/game', {
     method: 'POST',
-    body: JSON.stringify(newGame)
+    body: JSON.stringify(game)
   }).then(response => {
     response.json()
   }).then(data => {
