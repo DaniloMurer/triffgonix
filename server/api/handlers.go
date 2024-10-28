@@ -39,7 +39,6 @@ func HandleDartWebSocket(c *gin.Context) {
 		logger.Error("error while reading from socket connection: %v", err)
 		return
 	}
-	// if a new handshake is made, register client in the correct hub. if no hub exists, create one
 	switch *message.Type {
 	case dto.Handshake:
 		hub, exists := hubs[gameId]

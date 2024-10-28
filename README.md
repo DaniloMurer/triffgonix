@@ -69,3 +69,7 @@ the server code is structured in following "features":
 - **dart** - here goes all the code relevant to the dart logic, mainly all the different engines that power different game modes
 - **database** - here goes all the code needed for database interactions such as orm logic and entities
 - **logging** - here goes the logger implementation
+
+for better comprehension and easier overview of the code, following [diagram](assets/diagram.puml) exists and is (hopefully) being updated regularly:
+
+<img alt="server uml diagram" src="assets/server-diagram.png" />

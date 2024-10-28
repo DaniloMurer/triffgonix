@@ -1,0 +1,219 @@
+@startuml
+namespace database {
+    class Game << (S,Aquamarine) >> {
+        + Name string
+        + Players []Player
+
+    }
+    class Model << (S,Aquamarine) >> {
+        + Id uint
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + DeletedAt gorm.DeletedAt
+
+    }
+    class Player << (S,Aquamarine) >> {
+        + PlayerName string
+
+    }
+    class Throw << (S,Aquamarine) >> {
+        + Points int16
+        + Multiplicator int16
+        + PlayerId uint
+
+    }
+}
+"database.Model" *-- "database.Game"
+"database.Model" *-- "database.Player"
+"database.Model" *-- "database.Throw"
+
+
+namespace domain {
+    class Game << (S,Aquamarine) >> {
+        + Id uint
+        + Name string
+        + Players []Player
+
+        + ToGameEntity() *database.Game
+        + FromGameEntity(game *database.Game) *Game
+
+    }
+    class Player << (S,Aquamarine) >> {
+        + Id uint
+        + PlayerName string
+        + Score int16
+        + AveragePoints int16
+
+        + ToPlayerEntity() *database.Player
+        + FromPlayerEntity(player *database.Player) *Player
+
+    }
+    class Throw << (S,Aquamarine) >> {
+        + Id uint
+        + Points int16
+        + Multiplicator int16
+        + PlayerId uint
+
+        + ToThrowEntity() *database.Throw
+        + FromThrowEntity(throw *database.Throw) *Throw
+
+    }
+}
+
+
+namespace dto {
+    class Game << (S,Aquamarine) >> {
+        + Id uint
+        + Name string
+        + GameMode string
+        + StartingScore int16
+        + Players []Player
+
+        + ToEntity() *database.Game
+        + FromEntity(game *database.Game) 
+
+    }
+    class Message << (S,Aquamarine) >> {
+        + Type *MessageType
+        + Content <font color=blue>map</font>[string]any
+
+    }
+    interface MessageContent  {
+    }
+    class Player << (S,Aquamarine) >> {
+        + Id uint
+        + Name string
+
+        + ToEntity() *database.Player
+        + ToDomain() *domain.Player
+
+    }
+    class Players << (S,Aquamarine) >> {
+        + AllPlayers []domain.Player
+        + CurrentPlayer domain.Player
+
+    }
+    class ThrowMessage << (S,Aquamarine) >> {
+        + Points int16
+        + Multiplicator int16
+
+    }
+    class UndoThrowMessage << (S,Aquamarine) >> {
+    }
+    class dto.MessageType << (T, #FF7700) >>  {
+    }
+}
+"dto.ThrowMessage" *-- "dto.MessageContent"
+"dto.UndoThrowMessage" *-- "dto.MessageContent"
+
+
+namespace engine {
+    interface Engine  {
+        + GetPlayerThrows(player *Player) *[]domain.Throw
+        + RegisterThrow(throw *domain.Throw, players *Players) 
+        + UndoLastThrow(players *Players) 
+        + CalculatePlayerScore(player *Player) 
+        + HasAnyPlayerWon(players *Players) *Player
+
+    }
+    class Game << (S,Aquamarine) >> {
+        + Name string
+        + Players *Players
+        + Engine Engine
+
+    }
+    class Player << (S,Aquamarine) >> {
+        + Value *domain.Player
+        + Previous *Player
+        + Next *Player
+        + Turns []Turn
+
+        + GetAverarePoints() int16
+
+    }
+    class Players << (S,Aquamarine) >> {
+        + Head *Player
+        + CurrentPlayer *Player
+        + Tail *Player
+
+        + Add(player *Player) 
+        + SwitchToNextPlayer() *Player
+        + SwitchToPreviousPlayer() *Player
+        + GetPreviousPlayer() *Player
+        + ToDto() dto.Players
+
+    }
+    class Turn << (S,Aquamarine) >> {
+        + First *domain.Throw
+        + Second *domain.Throw
+        + Third *domain.Throw
+
+        + Sum() int16
+        + Append(throw *domain.Throw) bool
+        + HasSpace() bool
+        + FillTurn(throw *domain.Throw) 
+        + ThrowCount() int16
+
+    }
+}
+
+
+namespace handlers {
+    class Client << (S,Aquamarine) >> {
+        + Id string
+        + Connection *websocket.Conn
+
+    }
+    class Hub << (S,Aquamarine) >> {
+        + Id uint
+        + Clients <font color=blue>map</font>[*Client]bool
+        + Game engine.Game
+
+        - broadcastMessage(message dto.Players) 
+        - cleanupClient(conn *websocket.Conn) 
+
+        + RegisterNewClient(conn *websocket.Conn) 
+        + BroadcastToClients(obj <font color=blue>interface</font>{}) []error
+        + HandleConnection(conn *websocket.Conn) 
+
+    }
+}
+
+
+namespace logging {
+    class Logger << (S,Aquamarine) >> {
+        + Logger *log.Logger
+
+        + Info(message string, args ...any) 
+        + Warn(message string, args ...any) 
+        + Error(message string, args ...any) 
+        + Trace(message string, args ...any) 
+        + Debug(message string, args ...any) 
+
+    }
+    class logging.Level << (T, #FF7700) >>  {
+    }
+}
+
+
+namespace x01 {
+    class X01Engine << (S,Aquamarine) >> {
+        + StartingScore int16
+        + Points []int16
+
+        - checkForOverThrow(throw *domain.Throw, player *engine.Player) bool
+
+        + GetPlayerThrows(player *engine.Player) *[]domain.Throw
+        + RegisterThrow(throw *domain.Throw, players *engine.Players) 
+        + UndoLastThrow(players *engine.Players) 
+        + CalculatePlayerScore(player *engine.Player) 
+        + HasAnyPlayerWon(players *engine.Players) *engine.Player
+
+    }
+}
+
+"engine.Engine" <|-- "x01.X01Engine"
+
+"__builtin__.string" #.. "dto.MessageType"
+"__builtin__.string" #.. "logging.Level"
+@enduml
