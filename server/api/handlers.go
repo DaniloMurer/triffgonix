@@ -22,6 +22,7 @@ var (
 var logger logging.Logger = logging.NewLogger()
 
 func HandleDartWebSocket(c *gin.Context) {
+	cleanupHubs()
 	// FIXME: only temporary
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true
@@ -116,4 +117,13 @@ func mockCreateGame() engine.Game {
 	game.Players.Add(&player)
 	game.Players.Add(&player2)
 	return game
+}
+
+// cleanupHubs removes hubs with zero clients connected to it
+func cleanupHubs() {
+	for gameId, hub := range hubs {
+		if len(hub.Clients) == 0 {
+			delete(hubs, gameId)
+		}
+	}
 }

@@ -42,12 +42,21 @@ func (hub *Hub) HandleConnection(conn *websocket.Conn) {
 		if err != nil {
 			logger.Warn("error occured while reading json: %+v", err)
 			conn.Close()
+			hub.cleanupClient(conn)
 			return
 		}
 		switch *message.Type {
 		case dto.Throw:
-			hub.Game.Engine.RegisterThrow(&domain.Throw{Points: 1, Multiplicator: 1}, hub.Game.Players)
-			hub.broadcastMessage(hub.Game.Players.ToDto())
+			// converting with type assertion. actually quite fancy
+			points, pointsOk := message.Content["points"].(int16)
+			muliplicator, multiplicatorOk := message.Content["multiplicator"].(int16)
+
+			if pointsOk && multiplicatorOk {
+				hub.Game.Engine.RegisterThrow(&domain.Throw{Points: points, Multiplicator: muliplicator}, hub.Game.Players)
+				hub.broadcastMessage(hub.Game.Players.ToDto())
+			} else {
+				logger.Warn("couldn't parse throw event's points and multiplicator: %+v", message)
+			}
 		case dto.UndoThrow:
 			hub.Game.Engine.UndoLastThrow(hub.Game.Players)
 			hub.broadcastMessage(hub.Game.Players.ToDto())
@@ -57,4 +66,11 @@ func (hub *Hub) HandleConnection(conn *websocket.Conn) {
 	}
 }
 
-// TODO: implement function for handling websocket messages in a loop. will be called as goroutine
+// cleanupClient removes connection from the hub after disconnect
+func (hub *Hub) cleanupClient(conn *websocket.Conn) {
+	for client := range hub.Clients {
+		if client.Connection == conn {
+			delete(hub.Clients, client)
+		}
+	}
+}
