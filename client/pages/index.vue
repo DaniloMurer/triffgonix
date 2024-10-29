@@ -1,11 +1,12 @@
 <script setup>
-import { Game, HandshakeContent, Player, SocketMessage, ThrowContent } from '~/common/data';
+import { Game, GameContent, HandshakeContent, Player, SocketMessage, ThrowContent } from '~/common/data';
 
 
 const messages = ref()
+const newGame = ref(new Game())
 
 onMounted(() => {
-  const socket = connectToSocket('201');
+  /*const socket = connectToSocket('201');
   socket.onopen = () => {
     const handshake = new SocketMessage('handshake', new HandshakeContent());
     const throw1 = new SocketMessage('throw', new ThrowContent(12, 1));
@@ -17,7 +18,7 @@ onMounted(() => {
     console.log(evt);
     const data = JSON.parse(evt.data);
     messages.value = data.currentPlayer.score;
-  }
+  }*/
 })
 
 const onCreateGame = function () {
@@ -25,7 +26,7 @@ const onCreateGame = function () {
     new Player(1, 'test'),
     new Player(2, 'test2')
   ];
-  const game = new Game('testico', 'x01', 401, players);
+  const game = new GameContent('testico', 'x01', 401, players);
 
   fetch('http://localhost:8080/api/game', {
     method: 'POST',
@@ -39,6 +40,7 @@ const onCreateGame = function () {
 </script>
 <template>
   <h1 class="text-center">Hello world</h1>
-  <span>{{ messages }}</span>
+  <input type="text" v-model="newGame.name" />
+  <input type="text" v-model="newGame.gameMode" />
   <button class="btn-primary btn" v-on:click="onCreateGame" />
 </template>

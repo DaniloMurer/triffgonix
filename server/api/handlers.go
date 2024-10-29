@@ -33,7 +33,7 @@ func HandleDartWebSocket(c *gin.Context) {
 	}
 	gameId := c.Param("gameId")
 	// get message from socket
-	var message dto.Message
+	var message dto.IncomingMessage
 	err = conn.ReadJSON(&message)
 	if err != nil {
 		logger.Error("error while reading from socket connection: %v", err)
@@ -116,8 +116,9 @@ func GetGames(c *gin.Context) {
 func broadcastNewGame(newGame *database.Game) {
 	game := dto.Game{}
 	game.FromEntity(newGame)
+	message := dto.OutgoingMessage{Type: dto.NewGame, Content: game}
 	for _, hub := range hubs {
-		hub.BroadcastToClients(game)
+		hub.BroadcastToClients(message)
 	}
 }
 

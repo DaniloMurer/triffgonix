@@ -24,6 +24,36 @@ export class Game {
   }
 }
 
+/**
+ * Type for player sent by websocket
+ */
+export class PlayerState {
+  id: number
+  playerName: string
+  score: number
+  averagePoints: number
+
+  constructor(id: number, playerName: string, score: number, averagePoints: number) {
+    this.id = id;
+    this.playerName = playerName;
+    this.score = score;
+    this.averagePoints = averagePoints;
+  }
+}
+
+/**
+ * Type for game sent by websocket
+ */
+export class GameState {
+  allPlayers: PlayerState[]
+  currentPlayer: PlayerState
+
+  constructor(allPlayers: PlayerState[], currentPlayer: PlayerState) {
+    this.allPlayers = allPlayers;
+    this.currentPlayer = currentPlayer;
+  }
+}
+
 export class ThrowContent {
   points: number
   multiplicator: number
@@ -39,12 +69,20 @@ export class HandshakeContent { }
 export class UndoThrowContent { }
 
 export class SocketMessage {
-  type: string
-  content: ThrowContent | HandshakeContent | UndoThrowContent
+  type: MessageType
+  content: ThrowContent | HandshakeContent | UndoThrowContent | Game
 
-  constructor(type: string, content: ThrowContent | HandshakeContent | UndoThrowContent) {
+  constructor(type: MessageType, content: ThrowContent | HandshakeContent | UndoThrowContent | Game) {
     this.type = type;
     this.content = content;
   }
 }
 
+export enum MessageType {
+  THROW = "throw",
+  HANDSHAKE = "handshake",
+  SAVE = "save",
+  UNDO_THROW = "undo-throw",
+  NEW_GAME = "new-game",
+  GAME_STATE = "game-state"
+}
