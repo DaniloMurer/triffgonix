@@ -15,12 +15,14 @@
     "@pinia/nuxt": "^0.5.4",
     "daisyui": "^4.12.10",
     "nuxt": "^3.13.0",
-    "vue": "latest",
-    "vue-router": "latest"
+    "vue": "latest"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.36",
     "@iconify-json/logos": "^1.1.43",
     "@iconify/tailwind": "^1.1.1"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }

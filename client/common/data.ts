@@ -1,7 +1,7 @@
 
-export class Player {
-  id: number
-  name: string
+export class PlayerDto {
+  id: number;
+  name: string;
 
   constructor(id: number, name: string) {
     this.id = id;
@@ -9,13 +9,13 @@ export class Player {
   }
 }
 
-export class Game {
+export class GameDto {
   name: string
   gameMode: string
   startingScore: number
-  players: Player[]
+  players: PlayerDto[]
 
-  constructor(name: string, gameMode: string, startingScore: number, players: Player[]) {
+  constructor(name: string, gameMode: string, startingScore: number, players: PlayerDto[]) {
     this.name = name;
     this.gameMode = gameMode;
     this.startingScore = startingScore;
@@ -70,9 +70,9 @@ export class UndoThrowContent { }
 
 export class SocketMessage {
   type: MessageType
-  content: ThrowContent | HandshakeContent | UndoThrowContent | Game
+  content: ThrowContent | HandshakeContent | UndoThrowContent | GameDto
 
-  constructor(type: MessageType, content: ThrowContent | HandshakeContent | UndoThrowContent | Game) {
+  constructor(type: MessageType, content: ThrowContent | HandshakeContent | UndoThrowContent | GameDto) {
     this.type = type;
     this.content = content;
   }

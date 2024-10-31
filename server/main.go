@@ -30,6 +30,7 @@ func main() {
 	webSocket := router.Group("/ws")
 	{
 		webSocket.GET("/dart/:gameId", handlers.HandleDartWebSocket)
+		webSocket.GET("/dart", handlers.HandleGeneralWebsocket)
 	}
 
 	err := router.Run("0.0.0.0:8080")

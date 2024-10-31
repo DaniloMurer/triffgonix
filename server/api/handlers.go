@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	upgrader = websocket.Upgrader{}
-	hubs     = map[string]Hub{}
+	upgrader           = websocket.Upgrader{}
+	hubs               = map[string]Hub{}
+	generalConnections []*websocket.Conn
 )
 
 var logger logging.Logger = logging.NewLogger()
@@ -52,6 +53,18 @@ func HandleDartWebSocket(c *gin.Context) {
 	} else {
 		conn.Close()
 	}
+}
+
+func HandleGeneralWebsocket(c *gin.Context) {
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		logger.Error("error while upgrading request to websocket protocol: %v", err)
+		return
+	}
+	generalConnections = append(generalConnections, conn)
 }
 
 func CreatePlayer(c *gin.Context) {
@@ -104,7 +117,7 @@ func CreateGame(c *gin.Context) {
 	}
 	newHub := Hub{Id: savedGame.Id, Clients: map[*Client]bool{}, Game: game}
 	hubs[strconv.FormatUint(uint64(savedGame.Id), 10)] = newHub
-
+	broadcastNewGame(savedGame)
 	c.JSON(http.StatusCreated, &savedGame)
 }
 
@@ -117,8 +130,11 @@ func broadcastNewGame(newGame *database.Game) {
 	game := dto.Game{}
 	game.FromEntity(newGame)
 	message := dto.OutgoingMessage{Type: dto.NewGame, Content: game}
-	for _, hub := range hubs {
-		hub.BroadcastToClients(message)
+	for _, conn := range generalConnections {
+		err := conn.WriteJSON(message)
+		if err != nil {
+			logger.Error("error while writing new game json: %+v", err)
+		}
 	}
 }
 

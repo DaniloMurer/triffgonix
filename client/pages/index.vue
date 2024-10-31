@@ -1,10 +1,8 @@
 <script setup>
-import { Game, GameContent, HandshakeContent, Player, SocketMessage, ThrowContent } from '~/common/data';
 
 
-const messages = ref()
-const newGame = ref(new Game())
 
+const newGame = ref(new GameDto('', '', 0, []))
 onMounted(() => {
   /*const socket = connectToSocket('201');
   socket.onopen = () => {

@@ -2734,7 +2734,6 @@ __metadata:
     daisyui: "npm:^4.12.10"
     nuxt: "npm:^3.13.0"
     vue: "npm:latest"
-    vue-router: "npm:latest"
   languageName: unknown
   linkType: soft
 
@@ -8322,7 +8321,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^4.4.5, vue-router@npm:latest":
+"vue-router@npm:^4.4.5":
   version: 4.4.5
   resolution: "vue-router@npm:4.4.5"
   dependencies:
