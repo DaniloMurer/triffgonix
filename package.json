@@ -12,7 +12,8 @@
     "server": "yarn workspace server",
     "client": "yarn workspace client",
     "server:test": "yarn workspace server test",
-    "server:coverage": "yarn workspace server test:coverage"
+    "server:coverage": "yarn workspace server test:coverage",
+    "client:build": "yarn client generate"
   },
   "packageManager": "yarn@4.5.1",
   "devDependencies": {

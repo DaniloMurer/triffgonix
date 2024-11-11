@@ -31,7 +31,7 @@ func (hub *Hub) broadcastMessage(message dto.OutgoingMessage) {
 	for client := range hub.Clients {
 		err := client.Connection.WriteJSON(message)
 		if err != nil {
-			logger.Error("error while sending message to client", err)
+			logger.Error("error while sending message to client: %+v", err)
 		}
 	}
 }

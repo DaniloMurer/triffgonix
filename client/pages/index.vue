@@ -1,7 +1,5 @@
 <script setup>
 
-
-
 const newGame = ref(new GameDto('', '', 0, []))
 onMounted(() => {
   /*const socket = connectToSocket('201');
@@ -24,7 +22,7 @@ const onCreateGame = function () {
     new Player(1, 'test'),
     new Player(2, 'test2')
   ];
-  const game = new GameContent('testico', 'x01', 401, players);
+  const game = new GameDto('testico', 'x01', 401, players);
 
   fetch('http://localhost:8080/api/game', {
     method: 'POST',
@@ -38,7 +36,7 @@ const onCreateGame = function () {
 </script>
 <template>
   <h1 class="text-center">Hello world</h1>
-  <input type="text" v-model="newGame.name" />
-  <input type="text" v-model="newGame.gameMode" />
+  <input class="input" type="text" v-model="newGame.name" />
+  <input class="input" type="text" v-model="newGame.gameMode" />
   <button class="btn-primary btn" v-on:click="onCreateGame" />
 </template>
