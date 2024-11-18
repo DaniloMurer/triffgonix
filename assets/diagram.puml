@@ -1,41 +1,12 @@
 @startuml
-namespace database {
-    class Game << (S,Aquamarine) >> {
-        + Name string
-        + Players []Player
-
-    }
-    class Model << (S,Aquamarine) >> {
-        + Id uint
-        + CreatedAt time.Time
-        + UpdatedAt time.Time
-        + DeletedAt gorm.DeletedAt
-
-    }
-    class Player << (S,Aquamarine) >> {
-        + PlayerName string
-
-    }
-    class Throw << (S,Aquamarine) >> {
-        + Points int16
-        + Multiplicator int16
-        + PlayerId uint
-
-    }
-}
-"database.Model" *-- "database.Game"
-"database.Model" *-- "database.Player"
-"database.Model" *-- "database.Throw"
-
-
 namespace domain {
     class Game << (S,Aquamarine) >> {
         + Id uint
         + Name string
         + Players []Player
 
-        + ToGameEntity() *database.Game
-        + FromGameEntity(game *database.Game) *Game
+        + ToGameEntity() *models.Game
+        + FromGameEntity(game *Game) *Game
 
     }
     class Player << (S,Aquamarine) >> {
@@ -44,8 +15,8 @@ namespace domain {
         + Score int16
         + AveragePoints int16
 
-        + ToPlayerEntity() *database.Player
-        + FromPlayerEntity(player *database.Player) *Player
+        + ToPlayerEntity() *models.Player
+        + FromPlayerEntity(player *Player) *Player
 
     }
     class Throw << (S,Aquamarine) >> {
@@ -54,8 +25,8 @@ namespace domain {
         + Multiplicator int16
         + PlayerId uint
 
-        + ToThrowEntity() *database.Throw
-        + FromThrowEntity(throw *database.Throw) *Throw
+        + ToThrowEntity() *models.Throw
+        + FromThrowEntity(throw *Throw) *Throw
 
     }
 }
@@ -69,22 +40,25 @@ namespace dto {
         + StartingScore int16
         + Players []Player
 
-        + ToEntity() *database.Game
-        + FromEntity(game *database.Game) 
+        + ToEntity() *models.Game
+        + FromEntity(game *models.Game) 
 
     }
-    class Message << (S,Aquamarine) >> {
+    class IncomingMessage << (S,Aquamarine) >> {
         + Type *MessageType
         + Content <font color=blue>map</font>[string]any
 
     }
-    interface MessageContent  {
+    class OutgoingMessage << (S,Aquamarine) >> {
+        + Type MessageType
+        + Content <font color=blue>interface</font>{}
+
     }
     class Player << (S,Aquamarine) >> {
         + Id uint
         + Name string
 
-        + ToEntity() *database.Player
+        + ToEntity() *models.Player
         + ToDomain() *domain.Player
 
     }
@@ -103,8 +77,6 @@ namespace dto {
     class dto.MessageType << (T, #FF7700) >>  {
     }
 }
-"dto.ThrowMessage" *-- "dto.MessageContent"
-"dto.UndoThrowMessage" *-- "dto.MessageContent"
 
 
 namespace engine {
@@ -128,7 +100,7 @@ namespace engine {
         + Next *Player
         + Turns []Turn
 
-        + GetAverarePoints() int16
+        + GetAveragePoints() int16
 
     }
     class Players << (S,Aquamarine) >> {
@@ -169,11 +141,11 @@ namespace handlers {
         + Clients <font color=blue>map</font>[*Client]bool
         + Game engine.Game
 
-        - broadcastMessage(message dto.Players) 
+        - broadcastMessage(message dto.OutgoingMessage) 
         - cleanupClient(conn *websocket.Conn) 
 
         + RegisterNewClient(conn *websocket.Conn) 
-        + BroadcastToClients(obj <font color=blue>interface</font>{}) []error
+        + BroadcastToClients(obj dto.OutgoingMessage) []error
         + HandleConnection(conn *websocket.Conn) 
 
     }
@@ -194,6 +166,35 @@ namespace logging {
     class logging.Level << (T, #FF7700) >>  {
     }
 }
+
+
+namespace models {
+    class Game << (S,Aquamarine) >> {
+        + Name string
+        + Players []Player
+
+    }
+    class Model << (S,Aquamarine) >> {
+        + Id uint
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + DeletedAt gorm.DeletedAt
+
+    }
+    class Player << (S,Aquamarine) >> {
+        + PlayerName string
+
+    }
+    class Throw << (S,Aquamarine) >> {
+        + Points int16
+        + Multiplicator int16
+        + PlayerId uint
+
+    }
+}
+"models.Model" *-- "models.Game"
+"models.Model" *-- "models.Player"
+"models.Model" *-- "models.Throw"
 
 
 namespace x01 {
