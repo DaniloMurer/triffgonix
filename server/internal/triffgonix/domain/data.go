@@ -1,8 +1,6 @@
 package domain
 
-import (
-	"server/database"
-)
+import "server/internal/triffgonix/models"
 
 type Player struct {
 	Id            uint   `json:"id"`
@@ -11,14 +9,14 @@ type Player struct {
 	AveragePoints int16  `json:"averagePoints"`
 }
 
-func (self *Player) ToPlayerEntity() *database.Player {
-	return &database.Player{
-		Model:      database.Model{Id: self.Id},
+func (self *Player) ToPlayerEntity() *models.Player {
+	return &models.Player{
+		Model:      models.Model{Id: self.Id},
 		PlayerName: self.PlayerName,
 	}
 }
 
-func (self *Player) FromPlayerEntity(player *database.Player) *Player {
+func (self *Player) FromPlayerEntity(player *Player) *Player {
 	return &Player{
 		Id:         player.Id,
 		PlayerName: player.PlayerName,
@@ -31,19 +29,19 @@ type Game struct {
 	Players []Player `json:"players"`
 }
 
-func (self *Game) ToGameEntity() *database.Game {
-	var players []database.Player
+func (self *Game) ToGameEntity() *models.Game {
+	var players []models.Player
 	for _, player := range self.Players {
 		players = append(players, *player.ToPlayerEntity())
 	}
-	return &database.Game{
-		Model:   database.Model{Id: uint(self.Id)},
+	return &models.Game{
+		Model:   models.Model{Id: uint(self.Id)},
 		Name:    self.Name,
 		Players: players,
 	}
 }
 
-func (self *Game) FromGameEntity(game *database.Game) *Game {
+func (self *Game) FromGameEntity(game *Game) *Game {
 	var players []Player
 	for _, player := range game.Players {
 		newPlayer := Player{}
@@ -65,16 +63,16 @@ type Throw struct {
 	PlayerId      uint  `json:"playerId"`
 }
 
-func (self *Throw) ToThrowEntity() *database.Throw {
-	return &database.Throw{
-		Model:         database.Model{Id: self.Id},
+func (self *Throw) ToThrowEntity() *models.Throw {
+	return &models.Throw{
+		Model:         models.Model{Id: self.Id},
 		Points:        self.Points,
 		Multiplicator: self.Multiplicator,
 		PlayerId:      self.PlayerId,
 	}
 }
 
-func (self *Throw) FromThrowEntity(throw *database.Throw) *Throw {
+func (self *Throw) FromThrowEntity(throw *Throw) *Throw {
 	return &Throw{
 		Id:            throw.Id,
 		Points:        throw.Points,

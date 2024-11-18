@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"server/api/dto"
-	"server/core/domain"
-	"server/logging"
+	"server/internal/triffgonix/api/dto"
+	"server/internal/triffgonix/domain"
+	"server/pkg/logging"
 )
 
 var logger logging.Logger = logging.NewLogger()
@@ -31,8 +31,8 @@ type Player struct {
 	Turns    []Turn
 }
 
-// GetAverarePoints gets average points scored across all turns from player
-func (player *Player) GetAverarePoints() int16 {
+// GetAveragePoints gets average points scored across all turns from player
+func (player *Player) GetAveragePoints() int16 {
 	var averagePoints int16
 	var throwCount int16
 	for _, turn := range player.Turns {
@@ -103,7 +103,7 @@ func (players *Players) ToDto() dto.Players {
 	currentNode := players.Head
 	for currentNode != nil {
 		domainPlayer := *currentNode.Value
-		domainPlayer.AveragePoints = currentNode.GetAverarePoints()
+		domainPlayer.AveragePoints = currentNode.GetAveragePoints()
 		domainPlayers = append(domainPlayers, domainPlayer)
 		currentNode = currentNode.Next
 	}

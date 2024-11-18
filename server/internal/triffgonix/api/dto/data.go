@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"server/core/domain"
-	"server/database"
+	"server/internal/triffgonix/domain"
+	"server/internal/triffgonix/models"
 )
 
 type Players struct {
@@ -18,18 +18,18 @@ type Game struct {
 	Players       []Player `json:"players"`
 }
 
-func (self *Game) ToEntity() *database.Game {
-	var players []database.Player
+func (self *Game) ToEntity() *models.Game {
+	var players []models.Player
 	for _, player := range self.Players {
 		players = append(players, *player.ToEntity())
 	}
-	return &database.Game{
+	return &models.Game{
 		Name:    self.Name,
 		Players: players,
 	}
 }
 
-func (self *Game) FromEntity(game *database.Game) {
+func (self *Game) FromEntity(game *models.Game) {
 	var players []Player
 	for _, player := range game.Players {
 		players = append(players, Player{Id: player.Id, Name: player.PlayerName})
@@ -44,9 +44,9 @@ type Player struct {
 	Name string `json:"name"`
 }
 
-func (self Player) ToEntity() *database.Player {
-	return &database.Player{
-		Model:      database.Model{Id: self.Id},
+func (self Player) ToEntity() *models.Player {
+	return &models.Player{
+		Model:      models.Model{Id: self.Id},
 		PlayerName: self.Name,
 	}
 }

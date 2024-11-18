@@ -1,9 +1,9 @@
 package x01
 
 import (
-	"server/core/domain"
-	"server/dart/engine"
-	"server/logging"
+	"server/internal/triffgonix/dart/engine"
+	"server/internal/triffgonix/domain"
+	"server/pkg/logging"
 )
 
 var logger = logging.NewLogger()

@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"server/internal/triffgonix/models"
 )
 
 var database *gorm.DB
@@ -17,19 +18,19 @@ func openDatabaseConnection() {
 
 func AutoMigrate() {
 	openDatabaseConnection()
-	err := database.AutoMigrate(&Player{}, &Game{})
+	err := database.AutoMigrate(&models.Player{}, &models.Game{})
 	if err != nil {
 		panic("cannot migrate schema to database")
 	}
 }
 
-func FindAllUsers() []Player {
-	var users []Player
+func FindAllUsers() []models.Player {
+	var users []models.Player
 	database.Find(&users)
 	return users
 }
 
-func CreatePlayer(player *Player) (error, *Player) {
+func CreatePlayer(player *models.Player) (error, *models.Player) {
 	var err error
 	result := database.Save(player)
 	if result.Error != nil {
@@ -38,13 +39,13 @@ func CreatePlayer(player *Player) (error, *Player) {
 	return err, player
 }
 
-func FindAllGames() []Game {
-	var games []Game
+func FindAllGames() []models.Game {
+	var games []models.Game
 	database.Find(&games)
 	return games
 }
 
-func CreateGame(game *Game) (error, *Game) {
+func CreateGame(game *models.Game) (error, *models.Game) {
 	result := database.Save(game)
 	var err error
 	if result.Error != nil {
@@ -54,6 +55,6 @@ func CreateGame(game *Game) (error, *Game) {
 }
 
 func CreateDummyUser() {
-	user := Player{PlayerName: "testico"}
+	user := models.Player{PlayerName: "testico"}
 	database.Save(&user)
 }

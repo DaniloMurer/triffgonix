@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"server/api/dto"
-	"server/core/domain"
-	"server/dart/engine"
-
 	"github.com/gorilla/websocket"
+	"server/internal/triffgonix/api/dto"
+	"server/internal/triffgonix/dart/engine"
+	"server/internal/triffgonix/domain"
 )
 
 type Client struct {

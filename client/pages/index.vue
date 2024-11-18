@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 
-const newGame = ref(new GameDto('', '', 0, []))
+const newGame = ref<Game>({} as Game)
 onMounted(() => {
   /*const socket = connectToSocket('201');
   socket.onopen = () => {
@@ -18,12 +18,11 @@ onMounted(() => {
 })
 
 const onCreateGame = function () {
-  const players = [
-    new Player(1, 'test'),
-    new Player(2, 'test2')
+  const players: Player[] = [
+    {} as Player
   ];
-  const game = new GameDto('testico', 'x01', 401, players);
-
+  const game: Game = {} as Game;
+  game.players = players;
   fetch('http://localhost:8080/api/game', {
     method: 'POST',
     body: JSON.stringify(game)

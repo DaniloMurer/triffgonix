@@ -6,8 +6,9 @@ export default defineNuxtConfig({
   ssr: false,
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
   imports: {
+    global: true,
     dirs: [
-      'common'
+      './common'
     ]
   }
 })
