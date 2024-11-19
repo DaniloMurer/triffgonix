@@ -9,9 +9,16 @@ import (
 
 var logger = logging.NewLogger()
 
+// WebSocketConnection defines the behavior required for a WebSocket connection
+type WebSocketConnection interface {
+	WriteJSON(v interface{}) error
+	ReadJSON(v interface{}) error
+	Close() error
+}
+
 type Client struct {
 	Id         string
-	Connection *websocket.Conn
+	Connection WebSocketConnection
 }
 
 type Hub struct {
@@ -21,7 +28,7 @@ type Hub struct {
 }
 
 // RegisterNewClient adds a web socket connection to the hub
-func (hub *Hub) RegisterNewClient(conn *websocket.Conn) {
+func (hub *Hub) RegisterNewClient(conn WebSocketConnection) {
 	logger.Trace("new client connected")
 	client := &Client{Id: "test", Connection: conn}
 	hub.Clients[client] = true
@@ -92,7 +99,7 @@ func (hub *Hub) HandleConnection(conn *websocket.Conn) {
 }
 
 // cleanupClient removes connection from the hub after disconnect
-func (hub *Hub) cleanupClient(conn *websocket.Conn) {
+func (hub *Hub) cleanupClient(conn WebSocketConnection) {
 	for client := range hub.Clients {
 		if client.Connection == conn {
 			delete(hub.Clients, client)

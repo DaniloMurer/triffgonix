@@ -8,7 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+// sets up the router
+func setupRouter() *gin.Engine {
 	database.AutoMigrate()
 
 	router := gin.Default()
@@ -20,7 +21,11 @@ func main() {
 
 	router.Use(cors.New(corsConfig))
 
-	group := router.Group("/group")
+	router.GET("/", func(c *gin.Context) {
+		c.String(200, "Welcome")
+	})
+
+	group := router.Group("/api")
 	{
 		group.POST("/user", api.CreatePlayer)
 		group.GET("/user", api.GetPlayers)
@@ -33,6 +38,11 @@ func main() {
 		socketGroup.GET("/dart", api.HandleGeneralWebsocket)
 	}
 
+	return router
+}
+
+func main() {
+	router := setupRouter()
 	err := router.Run("0.0.0.0:8080")
 	if err != nil {
 		panic("Error while starting server")
