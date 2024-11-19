@@ -18,25 +18,25 @@ type Game struct {
 	Players       []Player `json:"players"`
 }
 
-func (self *Game) ToEntity() *models.Game {
+func (game *Game) ToEntity() *models.Game {
 	var players []models.Player
-	for _, player := range self.Players {
+	for _, player := range game.Players {
 		players = append(players, *player.ToEntity())
 	}
 	return &models.Game{
-		Name:    self.Name,
+		Name:    game.Name,
 		Players: players,
 	}
 }
 
-func (self *Game) FromEntity(game *models.Game) {
+func (game *Game) FromEntity(gameEntity *models.Game) {
 	var players []Player
-	for _, player := range game.Players {
+	for _, player := range gameEntity.Players {
 		players = append(players, Player{Id: player.Id, Name: player.PlayerName})
 	}
-	self.Id = game.Id
-	self.Name = game.Name
-	self.Players = players
+	game.Id = gameEntity.Id
+	game.Name = gameEntity.Name
+	game.Players = players
 }
 
 type Player struct {
@@ -44,17 +44,17 @@ type Player struct {
 	Name string `json:"name"`
 }
 
-func (self Player) ToEntity() *models.Player {
+func (player Player) ToEntity() *models.Player {
 	return &models.Player{
-		Model:      models.Model{Id: self.Id},
-		PlayerName: self.Name,
+		Model:      models.Model{Id: player.Id},
+		PlayerName: player.Name,
 	}
 }
 
-func (self Player) ToDomain() *domain.Player {
+func (player Player) ToDomain() *domain.Player {
 	return &domain.Player{
-		Id:            self.Id,
-		PlayerName:    self.Name,
+		Id:            player.Id,
+		PlayerName:    player.Name,
 		Score:         0,
 		AveragePoints: 0,
 	}

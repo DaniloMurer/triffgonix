@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="start:server" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="triffgonix" />
+    <working_directory value="$PROJECT_DIR$/server" />
+    <envs>
+      <env name="VERBOSE" value="true" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="server/cmd/triffgonix" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/server/cmd/triffgonix/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

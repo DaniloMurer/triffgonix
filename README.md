@@ -38,21 +38,33 @@ this means to run triffgonix you need a node environment and have go installed o
 
 ### run project
 
-to run the project, you need to start the nuxt frontend and go backend:
+run the `start` intellij run configuration or use following yarn command:
 
 ```bash
 yarn start:dev
 ```
 
+you can only start the frontend using the `start:client` intellij run configuration or following yarn command:
+```bash
+yarn start:client
+```
+
+you can only start the backend using the `start:server` intellij run configuration or following yarn command:
+```bash
+yarn start:server
+```
+
 ### server tests
 
-the backend has unit tests, crazy right? at the moment i mainly use unit tests to develop and assure functionality of the engine package. you can run those tests using following command:
+the backend has unit tests, crazy right? at the moment i mainly use unit tests to develop and assure functionality of the engine package.
+
+you can run those tests using the `test:server` intellij run configuration or following yarn command:
 
 ```bash
 yarn server:test
 ```
 
-you can even get a testing coverage for the package using following commands instead:
+you can even get a testing coverage for the package using the `test:server` intellij run configuration with "run with coverage" or following yarn command instead:
 
 ```bash
 yarn server:coverage
@@ -60,15 +72,8 @@ yarn server:coverage
 
 this will open the code coverage in your default browser.
 
+
 ## server code structure
-
-the server code is structured in following "features":
-
-- **api** - here goes the code for the http and web socket interface
-- **core** - here goes the code that is common between multiple features. an example is domain data objects
-- **dart** - here goes all the code relevant to the dart logic, mainly all the different engines that power different game modes
-- **database** - here goes all the code needed for database interactions such as orm logic and entities
-- **logging** - here goes the logger implementation
 
 for better comprehension and easier overview of the code, following [diagram](assets/diagram.puml) exists and is (hopefully) being updated regularly:
 

@@ -20,17 +20,17 @@ func main() {
 
 	router.Use(cors.New(corsConfig))
 
-	api := router.Group("/api")
+	group := router.Group("/group")
 	{
-		api.POST("/user", handlers.CreatePlayer)
-		api.GET("/user", handlers.GetPlayers)
-		api.POST("/game", handlers.CreateGame)
-		api.GET("/game", handlers.GetGames)
+		group.POST("/user", api.CreatePlayer)
+		group.GET("/user", api.GetPlayers)
+		group.POST("/game", api.CreateGame)
+		group.GET("/game", api.GetGames)
 	}
-	webSocket := router.Group("/ws")
+	socketGroup := router.Group("/ws")
 	{
-		webSocket.GET("/dart/:gameId", handlers.HandleDartWebSocket)
-		webSocket.GET("/dart", handlers.HandleGeneralWebsocket)
+		socketGroup.GET("/dart/:gameId", api.HandleDartWebSocket)
+		socketGroup.GET("/dart", api.HandleGeneralWebsocket)
 	}
 
 	err := router.Run("0.0.0.0:8080")

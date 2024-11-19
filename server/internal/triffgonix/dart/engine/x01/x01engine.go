@@ -13,6 +13,10 @@ type X01Engine struct {
 	Points        []int16
 }
 
+func (x01Engine *X01Engine) GetPossiblePoints() []int16 {
+	return x01Engine.Points
+}
+
 func (x01Engine *X01Engine) GetPlayerThrows(player *engine.Player) *[]domain.Throw {
 	var playerThrows []domain.Throw
 	for _, turn := range player.Turns {

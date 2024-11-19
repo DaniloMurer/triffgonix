@@ -1,8 +1,9 @@
-package handlers
+package api
 
 import (
 	"net/http"
 	"server/internal/triffgonix/api/dto"
+	"server/internal/triffgonix/api/socket"
 	"server/internal/triffgonix/dart/engine"
 	"server/internal/triffgonix/dart/engine/x01"
 	"server/internal/triffgonix/database"
@@ -16,11 +17,11 @@ import (
 
 var (
 	upgrader           = websocket.Upgrader{}
-	hubs               = map[string]Hub{}
+	hubs               = map[string]socket.Hub{}
 	generalConnections []*websocket.Conn
 )
 
-var logger logging.Logger = logging.NewLogger()
+var logger = logging.NewLogger()
 
 func HandleDartWebSocket(c *gin.Context) {
 	cleanupHubs()
@@ -35,14 +36,14 @@ func HandleDartWebSocket(c *gin.Context) {
 	}
 	gameId := c.Param("gameId")
 	// get message from socket
-	var message dto.IncomingMessage
+	var message socket.IncomingMessage
 	err = conn.ReadJSON(&message)
 	if err != nil {
 		logger.Error("error while reading from socket connection: %v", err)
 		return
 	}
 	switch *message.Type {
-	case dto.Handshake:
+	case socket.Handshake:
 		hub, exists := hubs[gameId]
 		if exists {
 			hub.RegisterNewClient(conn)
@@ -52,7 +53,10 @@ func HandleDartWebSocket(c *gin.Context) {
 	if exists {
 		go hub.HandleConnection(conn)
 	} else {
-		conn.Close()
+		err := conn.Close()
+		if err != nil {
+			logger.Error("error while closing websocket connection: %+v", err)
+		}
 	}
 }
 
@@ -116,7 +120,7 @@ func CreateGame(c *gin.Context) {
 		Players: &players,
 		Engine:  x01.New(newGame.StartingScore),
 	}
-	newHub := Hub{Id: savedGame.Id, Clients: map[*Client]bool{}, Game: game}
+	newHub := socket.Hub{Id: savedGame.Id, Clients: map[*socket.Client]bool{}, Game: game}
 	hubs[strconv.FormatUint(uint64(savedGame.Id), 10)] = newHub
 	broadcastNewGame(savedGame)
 	c.JSON(http.StatusCreated, &savedGame)
@@ -130,7 +134,7 @@ func GetGames(c *gin.Context) {
 func broadcastNewGame(newGame *models.Game) {
 	game := dto.Game{}
 	game.FromEntity(newGame)
-	message := dto.OutgoingMessage{Type: dto.NewGame, Content: game}
+	message := socket.OutgoingMessage{Type: socket.NewGame, Content: game}
 	for _, conn := range generalConnections {
 		err := conn.WriteJSON(message)
 		if err != nil {

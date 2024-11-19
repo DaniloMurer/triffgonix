@@ -16,7 +16,6 @@ const (
 	DEBUG Level = "DEBUG"
 )
 
-// TODO: set desired logging level via env variable. e.g no trace logs when production
 type Logger struct {
 	Logger *log.Logger
 }
@@ -57,6 +56,10 @@ func (logger Logger) Error(message string, args ...any) {
 }
 
 func (logger Logger) Trace(message string, args ...any) {
+	_, exists := os.LookupEnv("VERBOSE")
+	if !exists {
+		return
+	}
 	var formattedMessage string
 	if args != nil {
 		formattedMessage = fmt.Sprintf(message, args...)

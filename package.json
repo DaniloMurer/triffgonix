@@ -11,6 +11,8 @@
     "start:dev": "concurrently \"yarn workspace client dev\" \"yarn workspace server start\"",
     "server": "yarn workspace server",
     "client": "yarn workspace client",
+    "start:client": "yarn workspace client dev",
+    "start:server": "yarn workspace server start",
     "server:test": "yarn workspace server test",
     "server:coverage": "yarn workspace server test:coverage",
     "client:build": "yarn client generate"

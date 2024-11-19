@@ -9,17 +9,17 @@ type Player struct {
 	AveragePoints int16  `json:"averagePoints"`
 }
 
-func (self *Player) ToPlayerEntity() *models.Player {
+func (player *Player) ToPlayerEntity() *models.Player {
 	return &models.Player{
-		Model:      models.Model{Id: self.Id},
-		PlayerName: self.PlayerName,
+		Model:      models.Model{Id: player.Id},
+		PlayerName: player.PlayerName,
 	}
 }
 
-func (self *Player) FromPlayerEntity(player *Player) *Player {
+func (player *Player) FromPlayerEntity(playerEntity *Player) *Player {
 	return &Player{
-		Id:         player.Id,
-		PlayerName: player.PlayerName,
+		Id:         playerEntity.Id,
+		PlayerName: playerEntity.PlayerName,
 	}
 }
 
@@ -29,29 +29,29 @@ type Game struct {
 	Players []Player `json:"players"`
 }
 
-func (self *Game) ToGameEntity() *models.Game {
+func (game *Game) ToGameEntity() *models.Game {
 	var players []models.Player
-	for _, player := range self.Players {
+	for _, player := range game.Players {
 		players = append(players, *player.ToPlayerEntity())
 	}
 	return &models.Game{
-		Model:   models.Model{Id: uint(self.Id)},
-		Name:    self.Name,
+		Model:   models.Model{Id: uint(game.Id)},
+		Name:    game.Name,
 		Players: players,
 	}
 }
 
-func (self *Game) FromGameEntity(game *Game) *Game {
+func (game *Game) FromGameEntity(gameEntity *Game) *Game {
 	var players []Player
-	for _, player := range game.Players {
+	for _, player := range gameEntity.Players {
 		newPlayer := Player{}
 		newPlayer.FromPlayerEntity(&player)
 		players = append(players, newPlayer)
 	}
 
 	return &Game{
-		Id:      game.Id,
-		Name:    game.Name,
+		Id:      gameEntity.Id,
+		Name:    gameEntity.Name,
 		Players: players,
 	}
 }
@@ -63,20 +63,20 @@ type Throw struct {
 	PlayerId      uint  `json:"playerId"`
 }
 
-func (self *Throw) ToThrowEntity() *models.Throw {
+func (throw *Throw) ToThrowEntity() *models.Throw {
 	return &models.Throw{
-		Model:         models.Model{Id: self.Id},
-		Points:        self.Points,
-		Multiplicator: self.Multiplicator,
-		PlayerId:      self.PlayerId,
-	}
-}
-
-func (self *Throw) FromThrowEntity(throw *Throw) *Throw {
-	return &Throw{
-		Id:            throw.Id,
+		Model:         models.Model{Id: throw.Id},
 		Points:        throw.Points,
 		Multiplicator: throw.Multiplicator,
 		PlayerId:      throw.PlayerId,
+	}
+}
+
+func (throw *Throw) FromThrowEntity(throwEntity *Throw) *Throw {
+	return &Throw{
+		Id:            throwEntity.Id,
+		Points:        throwEntity.Points,
+		Multiplicator: throwEntity.Multiplicator,
+		PlayerId:      throwEntity.PlayerId,
 	}
 }

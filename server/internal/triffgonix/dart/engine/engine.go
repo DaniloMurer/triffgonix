@@ -3,15 +3,11 @@ package engine
 import (
 	"server/internal/triffgonix/api/dto"
 	"server/internal/triffgonix/domain"
-	"server/pkg/logging"
 )
 
-var logger logging.Logger = logging.NewLogger()
-
 type Engine interface {
-	// FIXME: i think for the future it would make sense to have a way to tell if certain points can be made.
-	// an example would be shangai, where after hitting three times a certain point, you cannot score on it no more.
-
+	// GetPossiblePoints returns the points that can be scored
+	GetPossiblePoints() []int16
 	// GetPlayerThrows returns the throws made by a given player
 	GetPlayerThrows(player *Player) *[]domain.Throw
 	// RegisterThrow registers a new player's throw
