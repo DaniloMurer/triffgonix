@@ -1,10 +1,10 @@
 package socket
 
 import (
+	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine"
+	"github.com/DaniloMurer/triffgonix/server/internal/domain"
+	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
 	"github.com/gorilla/websocket"
-	"server/internal/triffgonix/dart/engine"
-	"server/internal/triffgonix/domain"
-	"server/pkg/logging"
 )
 
 var logger = logging.NewLogger()

@@ -1,9 +1,9 @@
 package database
 
 import (
+	"github.com/DaniloMurer/triffgonix/server/internal/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"server/internal/triffgonix/models"
 )
 
 var database *gorm.DB

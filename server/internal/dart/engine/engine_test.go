@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"server/internal/triffgonix/domain"
+	"github.com/DaniloMurer/triffgonix/server/internal/domain"
 	"testing"
 )
 

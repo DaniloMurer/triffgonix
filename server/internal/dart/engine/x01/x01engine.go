@@ -1,9 +1,10 @@
+// Package x01 is the implementation of the X01 dart game mode
 package x01
 
 import (
-	"server/internal/triffgonix/dart/engine"
-	"server/internal/triffgonix/domain"
-	"server/pkg/logging"
+	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine"
+	"github.com/DaniloMurer/triffgonix/server/internal/domain"
+	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
 )
 
 var logger = logging.NewLogger()

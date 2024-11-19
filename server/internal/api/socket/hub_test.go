@@ -1,7 +1,7 @@
 package socket
 
 import (
-	"server/pkg/logging"
+	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
 	"testing"
 )
 

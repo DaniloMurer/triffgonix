@@ -1,10 +1,10 @@
 package api
 
 import (
+	"github.com/DaniloMurer/triffgonix/server/internal/database"
+	"github.com/DaniloMurer/triffgonix/server/internal/models"
 	"github.com/google/uuid"
 	"net/http/httptest"
-	"server/internal/triffgonix/database"
-	"server/internal/triffgonix/models"
 	"testing"
 
 	"github.com/gin-gonic/gin"

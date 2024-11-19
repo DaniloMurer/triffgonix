@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"server/internal/triffgonix/api/dto"
-	"server/internal/triffgonix/domain"
+	"github.com/DaniloMurer/triffgonix/server/internal/api/dto"
+	"github.com/DaniloMurer/triffgonix/server/internal/domain"
 )
 
 type Engine interface {

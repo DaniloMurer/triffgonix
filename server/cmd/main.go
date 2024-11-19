@@ -1,9 +1,8 @@
 package main
 
 import (
-	"server/internal/triffgonix/api"
-	"server/internal/triffgonix/database"
-
+	"github.com/DaniloMurer/triffgonix/server/internal/api"
+	"github.com/DaniloMurer/triffgonix/server/internal/database"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

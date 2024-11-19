@@ -1,14 +1,14 @@
 package api
 
 import (
+	"github.com/DaniloMurer/triffgonix/server/internal/api/dto"
+	socket2 "github.com/DaniloMurer/triffgonix/server/internal/api/socket"
+	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine"
+	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine/x01"
+	"github.com/DaniloMurer/triffgonix/server/internal/database"
+	"github.com/DaniloMurer/triffgonix/server/internal/models"
+	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
 	"net/http"
-	"server/internal/triffgonix/api/dto"
-	"server/internal/triffgonix/api/socket"
-	"server/internal/triffgonix/dart/engine"
-	"server/internal/triffgonix/dart/engine/x01"
-	"server/internal/triffgonix/database"
-	"server/internal/triffgonix/models"
-	"server/pkg/logging"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,7 @@ import (
 
 var (
 	upgrader           = websocket.Upgrader{}
-	hubs               = map[string]socket.Hub{}
+	hubs               = map[string]socket2.Hub{}
 	generalConnections []*websocket.Conn
 )
 
@@ -36,14 +36,14 @@ func HandleDartWebSocket(c *gin.Context) {
 	}
 	gameId := c.Param("gameId")
 	// get message from socket
-	var message socket.IncomingMessage
+	var message socket2.IncomingMessage
 	err = conn.ReadJSON(&message)
 	if err != nil {
 		logger.Error("error while reading from socket connection: %v", err)
 		return
 	}
 	switch *message.Type {
-	case socket.Handshake:
+	case socket2.Handshake:
 		hub, exists := hubs[gameId]
 		if exists {
 			hub.RegisterNewClient(conn)
@@ -120,7 +120,7 @@ func CreateGame(c *gin.Context) {
 		Players: &players,
 		Engine:  x01.New(newGame.StartingScore),
 	}
-	newHub := socket.Hub{Id: savedGame.Id, Clients: map[*socket.Client]bool{}, Game: game}
+	newHub := socket2.Hub{Id: savedGame.Id, Clients: map[*socket2.Client]bool{}, Game: game}
 	hubs[strconv.FormatUint(uint64(savedGame.Id), 10)] = newHub
 	broadcastNewGame(savedGame)
 	c.JSON(http.StatusCreated, &savedGame)
@@ -134,7 +134,7 @@ func GetGames(c *gin.Context) {
 func broadcastNewGame(newGame *models.Game) {
 	game := dto.Game{}
 	game.FromEntity(newGame)
-	message := socket.OutgoingMessage{Type: socket.NewGame, Content: game}
+	message := socket2.OutgoingMessage{Type: socket2.NewGame, Content: game}
 	for _, conn := range generalConnections {
 		err := conn.WriteJSON(message)
 		if err != nil {

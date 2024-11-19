@@ -1,6 +1,8 @@
 package domain
 
-import "server/internal/triffgonix/models"
+import (
+	"github.com/DaniloMurer/triffgonix/server/internal/models"
+)
 
 type Player struct {
 	Id            uint   `json:"id"`

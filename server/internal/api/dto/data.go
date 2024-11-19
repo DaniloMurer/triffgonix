@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"server/internal/triffgonix/domain"
-	"server/internal/triffgonix/models"
+	"github.com/DaniloMurer/triffgonix/server/internal/domain"
+	"github.com/DaniloMurer/triffgonix/server/internal/models"
 )
 
 type Players struct {

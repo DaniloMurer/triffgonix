@@ -1,8 +1,8 @@
 package database
 
 import (
+	"github.com/DaniloMurer/triffgonix/server/internal/models"
 	"github.com/google/uuid"
-	"server/internal/triffgonix/models"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

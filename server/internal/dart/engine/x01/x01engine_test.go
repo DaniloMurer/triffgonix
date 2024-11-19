@@ -2,8 +2,8 @@ package x01
 
 import (
 	"fmt"
-	"server/internal/triffgonix/dart/engine"
-	"server/internal/triffgonix/domain"
+	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine"
+	"github.com/DaniloMurer/triffgonix/server/internal/domain"
 	"testing"
 )
 
