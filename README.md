@@ -1,5 +1,7 @@
 # triffgonix
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=DaniloMurer_triffgonix)](https://sonarcloud.io/summary/new_code?id=DaniloMurer_triffgonix)
+
 <img alt="ai image" height="300px" src="assets/triffgonix_logo_ai.png" width="300px"/>
 
 ^ this logo is ai generated, but if you got a better one i'm open for suggestions : )
