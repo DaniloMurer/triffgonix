@@ -41,7 +41,7 @@ func CreatePlayer(player *models.Player) (error, *models.Player) {
 
 func FindAllGames() []models.Game {
 	var games []models.Game
-	database.Find(&games)
+	database.Preload("Players").Find(&games)
 	return games
 }
 

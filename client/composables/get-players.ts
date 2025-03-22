@@ -1,6 +1,6 @@
-import {getApiUser, type ModelsPlayer} from "#shared/utils";
+import { getApiUser, type ModelsPlayer } from '#shared/utils';
 
-export const usePlayers = () => {
+export const getPlayers = () => {
   const players = ref<ModelsPlayer[]>([]);
 
   const fetchPlayers = async () => {
@@ -8,14 +8,14 @@ export const usePlayers = () => {
     if (response.data) {
       players.value = response.data;
     }
-  }
+  };
 
   onMounted(() => {
-    fetchPlayers();
-  })
+    void fetchPlayers();
+  });
 
   return {
     players,
-    fetchPlayers
-  }
-}
+    fetchPlayers,
+  };
+};
