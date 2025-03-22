@@ -6,9 +6,9 @@
       <env name="VERBOSE" value="true" />
     </envs>
     <kind value="PACKAGE" />
-    <package value="server/cmd/triffgonix" />
+    <package value="github.com/DaniloMurer/triffgonix/server/cmd" />
     <directory value="$PROJECT_DIR$" />
-    <filePath value="$PROJECT_DIR$/server/cmd/triffgonix/main.go" />
+    <filePath value="$PROJECT_DIR$/server/cmd/triffgonix/main.go|$PROJECT_DIR$/server/cmd/main.go" />
     <method v="2" />
   </configuration>
 </component>

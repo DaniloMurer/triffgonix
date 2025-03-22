@@ -74,9 +74,10 @@ yarn server:coverage
 
 this will open the code coverage in your default browser.
 
+### generate openapi client
 
-## server code structure
-
-for better comprehension and easier overview of the code, following [diagram](assets/diagram.puml) exists and is (hopefully) being updated regularly:
-
-<img alt="server uml diagram" src="assets/server-diagram.png" />
+you can generate the whole api client using following command:
+```bash
+yarn generate:api
+```
+this will generate the openapi spec from the backend as well prior to the fetch client

@@ -15,10 +15,12 @@
     "start:server": "yarn workspace server start",
     "server:test": "yarn workspace server test",
     "server:coverage": "yarn workspace server test:coverage",
-    "client:build": "yarn client generate"
+    "client:build": "yarn client generate",
+    "generate:api": "yarn server generate:openapi && yarn client generate:client"
   },
   "packageManager": "yarn@4.5.1",
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.64.13",
     "concurrently": "^9.0.1"
   }
 }

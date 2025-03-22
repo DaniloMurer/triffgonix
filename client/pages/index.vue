@@ -1,6 +1,9 @@
 <script setup lang="ts">
 
+import {getApiGame, type ModelsGame} from "~/shared/utils";
+
 const newGame = ref<Game>({} as Game)
+const games = ref<ModelsGame[]>([]);
 onMounted(() => {
   /*const socket = connectToSocket('201');
   socket.onopen = () => {
@@ -15,6 +18,14 @@ onMounted(() => {
     const data = JSON.parse(evt.data);
     messages.value = data.currentPlayer.score;
   }*/
+  getApiGame().then(
+    (data) => {
+      if (data.data) {
+        games.value = data.data;
+      }
+      console.log(games.value);
+    }
+  )
 })
 
 const onCreateGame = function () {

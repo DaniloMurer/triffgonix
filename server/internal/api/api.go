@@ -23,6 +23,15 @@ var (
 
 var logger = logging.NewLogger()
 
+// HandleDartWebSocket godoc
+// @Summary Handle game-specific WebSocket connections
+// @Description Handles WebSocket connections for specific dart games
+// @Tags websocket
+// @Accept json
+// @Param gameId path string true "Game ID"
+// @Success 101 "Switching Protocols to WebSocket"
+// @Failure 400 "Bad Request"
+// @Router /ws/dart/{gameId} [get]
 func HandleDartWebSocket(c *gin.Context) {
 	cleanupHubs()
 	// FIXME: only temporary
@@ -60,6 +69,14 @@ func HandleDartWebSocket(c *gin.Context) {
 	}
 }
 
+// HandleGeneralWebsocket godoc
+// @Summary Handle general WebSocket connections
+// @Description Handles WebSocket connections for general game updates
+// @Tags websocket
+// @Accept json
+// @Success 101 "Switching Protocols to WebSocket"
+// @Failure 400 "Bad Request"
+// @Router /ws/dart [get]
 func HandleGeneralWebsocket(c *gin.Context) {
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true
@@ -72,6 +89,16 @@ func HandleGeneralWebsocket(c *gin.Context) {
 	generalConnections = append(generalConnections, conn)
 }
 
+// CreatePlayer godoc
+// @Summary Create a new player
+// @Description Creates a new player in the system
+// @Tags players
+// @Accept json
+// @Produce json
+// @Param player body dto.Player true "Player information"
+// @Success 201 {object} models.Player "Created player"
+// @Failure 500 "Internal Server Error"
+// @Router /api/user [post]
 func CreatePlayer(c *gin.Context) {
 	var player dto.Player
 	err := c.BindJSON(&player)
@@ -89,11 +116,28 @@ func CreatePlayer(c *gin.Context) {
 	c.JSON(http.StatusCreated, &newPlayer)
 }
 
+// GetPlayers godoc
+// @Summary Get all players
+// @Description Retrieves all players from the system
+// @Tags players
+// @Produce json
+// @Success 200 {array} models.Player "List of players"
+// @Router /api/user [get]
 func GetPlayers(c *gin.Context) {
 	users := database.FindAllUsers()
-	c.JSON(http.StatusFound, &users)
+	c.JSON(http.StatusOK, &users)
 }
 
+// CreateGame godoc
+// @Summary Create a new game
+// @Description Creates a new dart game and sets up the corresponding hub
+// @Tags games
+// @Accept json
+// @Produce json
+// @Param game body dto.Game true "Game information"
+// @Success 201 {object} models.Game "Created game"
+// @Failure 500 "Internal Server Error"
+// @Router /api/game [post]
 func CreateGame(c *gin.Context) {
 	var newGame dto.Game
 	err := c.BindJSON(&newGame)
@@ -126,9 +170,16 @@ func CreateGame(c *gin.Context) {
 	c.JSON(http.StatusCreated, &savedGame)
 }
 
+// GetGames godoc
+// @Summary Get all games
+// @Description Retrieves all games from the system
+// @Tags games
+// @Produce json
+// @Success 200 {array} models.Game "List of games"
+// @Router /api/game [get]
 func GetGames(c *gin.Context) {
 	games := database.FindAllGames()
-	c.JSON(http.StatusFound, &games)
+	c.JSON(http.StatusOK, &games)
 }
 
 func broadcastNewGame(newGame *models.Game) {

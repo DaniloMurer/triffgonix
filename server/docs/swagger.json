@@ -1,0 +1,245 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Triffgonix api documentation",
+        "title": "Triffgonix API",
+        "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "paths": {
+        "/api/game": {
+            "get": {
+                "description": "Retrieves all games from the system",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get all games",
+                "responses": {
+                    "200": {
+                        "description": "List of games",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Game"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new dart game and sets up the corresponding hub",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Create a new game",
+                "parameters": [
+                    {
+                        "description": "Game information",
+                        "name": "game",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Game"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created game",
+                        "schema": {
+                            "$ref": "#/definitions/models.Game"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/user": {
+            "get": {
+                "description": "Retrieves all players from the system",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "players"
+                ],
+                "summary": "Get all players",
+                "responses": {
+                    "200": {
+                        "description": "List of players",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Player"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new player in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "players"
+                ],
+                "summary": "Create a new player",
+                "parameters": [
+                    {
+                        "description": "Player information",
+                        "name": "player",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Player"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created player",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/ws/dart": {
+            "get": {
+                "description": "Handles WebSocket connections for general game updates",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Handle general WebSocket connections",
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols to WebSocket"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/ws/dart/{gameId}": {
+            "get": {
+                "description": "Handles WebSocket connections for specific dart games",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Handle game-specific WebSocket connections",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "gameId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols to WebSocket"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.Game": {
+            "type": "object",
+            "properties": {
+                "gameMode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Player"
+                    }
+                },
+                "startingScore": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.Player": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Game": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Player"
+                    }
+                }
+            }
+        },
+        "models.Player": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

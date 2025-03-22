@@ -7,6 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//	@title			Triffgonix API
+//	@version		1.0
+//	@description	Triffgonix api documentation
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@host		localhost:8080
+
 // sets up the router
 func setupRouter() *gin.Engine {
 	database.AutoMigrate()

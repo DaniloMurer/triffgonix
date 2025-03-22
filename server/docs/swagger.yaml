@@ -1,0 +1,160 @@
+definitions:
+  dto.Game:
+    properties:
+      gameMode:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/dto.Player'
+        type: array
+      startingScore:
+        type: integer
+    type: object
+  dto.Player:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Game:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/models.Player'
+        type: array
+    type: object
+  models.Player:
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Triffgonix api documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Triffgonix API
+  version: "1.0"
+paths:
+  /api/game:
+    get:
+      description: Retrieves all games from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of games
+          schema:
+            items:
+              $ref: '#/definitions/models.Game'
+            type: array
+      summary: Get all games
+      tags:
+      - games
+    post:
+      consumes:
+      - application/json
+      description: Creates a new dart game and sets up the corresponding hub
+      parameters:
+      - description: Game information
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Game'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created game
+          schema:
+            $ref: '#/definitions/models.Game'
+        "500":
+          description: Internal Server Error
+      summary: Create a new game
+      tags:
+      - games
+  /api/user:
+    get:
+      description: Retrieves all players from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of players
+          schema:
+            items:
+              $ref: '#/definitions/models.Player'
+            type: array
+      summary: Get all players
+      tags:
+      - players
+    post:
+      consumes:
+      - application/json
+      description: Creates a new player in the system
+      parameters:
+      - description: Player information
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Player'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created player
+          schema:
+            $ref: '#/definitions/models.Player'
+        "500":
+          description: Internal Server Error
+      summary: Create a new player
+      tags:
+      - players
+  /ws/dart:
+    get:
+      consumes:
+      - application/json
+      description: Handles WebSocket connections for general game updates
+      responses:
+        "101":
+          description: Switching Protocols to WebSocket
+        "400":
+          description: Bad Request
+      summary: Handle general WebSocket connections
+      tags:
+      - websocket
+  /ws/dart/{gameId}:
+    get:
+      consumes:
+      - application/json
+      description: Handles WebSocket connections for specific dart games
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameId
+        required: true
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols to WebSocket
+        "400":
+          description: Bad Request
+      summary: Handle game-specific WebSocket connections
+      tags:
+      - websocket
+swagger: "2.0"

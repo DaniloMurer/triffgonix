@@ -26,9 +26,9 @@ func TestMain_GroupRoutes(t *testing.T) {
 		expected int
 	}{
 		{"POST", "/api/user", 400}, // Assuming it requires a body and proper setup
-		{"GET", "/api/user", 302},
+		{"GET", "/api/user", 200},
 		{"POST", "/api/game", 400}, // Assuming it requires a body and proper setup
-		{"GET", "/api/game", 302},
+		{"GET", "/api/game", 200},
 	}
 
 	for _, tt := range tests {
