@@ -142,5 +142,5 @@ export type GetWsDartByGameIdErrors = {
 };
 
 export type ClientOptions = {
-    baseUrl: 'localhost:8080' | (string & {});
+    baseUrl: 'http://localhost:8080' | (string & {});
 };

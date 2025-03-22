@@ -4,11 +4,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   telemetry: {enabled: false},
   ssr: false,
-  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
-  imports: {
-    global: true,
-    dirs: [
-      './common'
-    ]
-  }
+  modules: ['@pinia/nuxt', '@nuxt/ui'],
+  css: ['~/assets/css/main.css']
 })

@@ -1,16 +1,19 @@
 <script setup lang="ts">
+const items = ref([
+    {
+      label: 'Triffgonix',
+      icon: 'i-lucide-home',
+      to: '/'
+    }
+])
 </script>
 
 <template>
-  <div class="m-3">
-    <div class="navbar bg-base-300 rounded-2xl shadow-2xl">
-      <div class="flex-1">
-        <h1 class="text-xl"><b>Triffgonix</b></h1>
-      </div>
-      <div class="flex-none p-5">
-      </div>
+  <UApp>
+    <div class="m-3">
+      <UNavigationMenu :items="items" orientation="horizontal"/>
+      <NuxtRouteAnnouncer/>
+      <NuxtPage/>
     </div>
-    <NuxtRouteAnnouncer />
-    <NuxtPage />
-  </div>
+  </UApp>
 </template>
