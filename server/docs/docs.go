@@ -93,7 +93,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Player"
+                                "$ref": "#/definitions/dto.Player"
                             }
                         }
                     }

@@ -77,7 +77,7 @@ export type GetApiUserResponses = {
     /**
      * List of players
      */
-    200: Array<ModelsPlayer>;
+    200: Array<DtoPlayer>;
 };
 
 export type GetApiUserResponse = GetApiUserResponses[keyof GetApiUserResponses];

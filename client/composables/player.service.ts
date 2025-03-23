@@ -1,7 +1,7 @@
-import { getApiUser, type ModelsPlayer } from '#shared/utils';
+import { type DtoPlayer, getApiUser } from '#shared/utils';
 
 export const usePlayerService = () => {
-  const players = ref<ModelsPlayer[]>([]);
+  const players = ref<DtoPlayer[]>([]);
 
   const fetchPlayers = async () => {
     const response = await getApiUser();

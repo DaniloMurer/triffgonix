@@ -59,3 +59,10 @@ func (player Player) ToDomain() *domain.Player {
 		AveragePoints: 0,
 	}
 }
+
+func (player Player) FromEntity(playerEntity *models.Player) Player {
+	return Player{
+		Id:   playerEntity.Id,
+		Name: playerEntity.PlayerName,
+	}
+}

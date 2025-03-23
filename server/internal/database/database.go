@@ -46,12 +46,16 @@ func FindAllGames() []models.Game {
 }
 
 func CreateGame(game *models.Game) (error, *models.Game) {
-	result := database.Save(game)
+	var newGame models.Game
+	result := database.Preload("Players").Save(game)
 	var err error
 	if result.Error != nil {
 		err = result.Error
 	}
-	return err, game
+
+	database.Preload("Players").Where("id = ?", game.Id).Find(&newGame)
+
+	return err, &newGame
 }
 
 func CreateDummyUser() {

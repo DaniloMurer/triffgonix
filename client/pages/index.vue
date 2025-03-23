@@ -1,9 +1,31 @@
 <script setup lang="ts">
-  import { useGameStore } from '~/store/game.store';
+  // import { useGameStore } from '~/store/game.store';
+  import { useSocketService } from '~/composables/socket.service';
+  import type {
+    GameStateContent,
+    IncomingSocketMessage,
+    NewGameContent,
+  } from '#shared/types/socket';
+  import { ref } from '#imports';
 
-  const gameStore = useGameStore();
+  // const gameStore = useGameStore();
+  const games = ref<GameStateContent[] | NewGameContent>();
+  const socketService = useSocketService();
+  let isNewGame = false;
 
-  const games = await gameStore.fetchGames();
+  // eslint-disable-next-line no-undef
+  const onMessage = (message: MessageEvent) => {
+    console.log('new message: ', JSON.parse(message.data));
+    const content = JSON.parse(message.data) as IncomingSocketMessage;
+    if (content.content) {
+      if (content.content instanceof NewGameContent) {
+        isNewGame = true;
+      }
+      games.value = content.content;
+    }
+  };
+
+  socketService.listenOnMessage(onMessage);
 </script>
 <template>
   <UContainer class="p-20 flex flex-wrap justify-center gap-4">

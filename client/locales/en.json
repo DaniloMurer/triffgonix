@@ -1,0 +1,12 @@
+{
+  "clear-errors": "Clean errors",
+  "create-game": "Create game",
+  "error-code": "Error-code",
+  "error-message": "Error-message",
+  "game-mode": "Game mode",
+  "game-name": "Game name",
+  "gamemode-required-error": "Game mode is required",
+  "name-required-error": "Game name is required",
+  "players": "Players",
+  "save": "Save"
+}

@@ -63,7 +63,7 @@
           <USelect
             :items="players"
             v-model="selectedPlayers"
-            label-key="username"
+            label-key="name"
             value-key="id"
             multiple
             class="w-52"

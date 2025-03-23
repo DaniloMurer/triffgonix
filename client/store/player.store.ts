@@ -1,8 +1,8 @@
-import type { ModelsPlayer } from '#shared/utils';
+import type { DtoPlayer } from '#shared/utils';
 import { usePlayerService } from '~/composables/player.service';
 
 export const usePlayerStore = defineStore('player', () => {
-  const players = ref<ModelsPlayer[]>([]);
+  const players = ref<DtoPlayer[]>([]);
 
   const getPlayers = () => {
     return players.value;
@@ -15,7 +15,7 @@ export const usePlayerStore = defineStore('player', () => {
     return players;
   };
 
-  const setPlayers = (newUsers: ModelsPlayer[]) => {
+  const setPlayers = (newUsers: DtoPlayer[]) => {
     console.log('setting players');
     players.value = newUsers;
   };

@@ -1,0 +1,12 @@
+{
+  "clear-errors": "Fehler bereinigen",
+  "create-game": "Spiel erstellen",
+  "error-code": "Fehlercode",
+  "error-message": "Fehlernachricht",
+  "game-mode": "Spielname",
+  "game-name": "Spielname",
+  "gamemode-required-error": "Spielmodus ist ein Pflichtfeld",
+  "name-required-error": "Spielname ist ein Pflichtfeld",
+  "players": "Spieler",
+  "save": "Speichern"
+}

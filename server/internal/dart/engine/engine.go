@@ -184,8 +184,21 @@ func (turn *Turn) ThrowCount() int16 {
 	return throwCount
 }
 
+type GameDto struct {
+	Name    string      `json:"name"`
+	Players dto.Players `json:"players"`
+}
+
 type Game struct {
 	Name    string
 	Players *Players
 	Engine  Engine
+}
+
+func (game *Game) ToDto() GameDto {
+	gameDto := GameDto{
+		Name:    game.Name,
+		Players: game.Players.ToDto(),
+	}
+	return gameDto
 }

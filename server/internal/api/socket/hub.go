@@ -27,6 +27,10 @@ type Hub struct {
 	Game    engine.Game
 }
 
+func (hub *Hub) GetGame() engine.GameDto {
+	return hub.Game.ToDto()
+}
+
 // RegisterNewClient adds a web socket connection to the hub
 func (hub *Hub) RegisterNewClient(conn WebSocketConnection) {
 	logger.Trace("new client connected")

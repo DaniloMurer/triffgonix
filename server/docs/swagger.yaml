@@ -97,7 +97,7 @@ paths:
           description: List of players
           schema:
             items:
-              $ref: '#/definitions/models.Player'
+              $ref: '#/definitions/dto.Player'
             type: array
       summary: Get all players
       tags:

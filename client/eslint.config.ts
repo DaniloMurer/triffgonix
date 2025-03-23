@@ -73,6 +73,7 @@ export default tseslint.config(
           document: 'readonly',
           ref: 'readonly',
           onMounted: 'readonly',
+          MessageEvent: 'readonly',
         },
       },
     },
