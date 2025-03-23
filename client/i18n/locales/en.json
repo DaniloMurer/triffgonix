@@ -1,0 +1,15 @@
+{
+  "cancel": "Cancel",
+  "clear-errors": "Clear errors",
+  "create-game": "Create game",
+  "error-code": "Error-code",
+  "error-message": "Error-message",
+  "game-mode": "Game mode",
+  "game-name": "Game name",
+  "gamemode-required-error": "A game mode must be given",
+  "language": "Language",
+  "name-required-error": "A game name must be given",
+  "players": "Players",
+  "players-required-error": "At least two players must be selected",
+  "save": "Save"
+}

@@ -17,6 +17,7 @@
     "@iconify-json/lucide": "^1.2.32",
     "@iconify-json/simple-icons": "^1.2.29",
     "@nuxt/ui": "^3.0.1",
+    "@nuxtjs/i18n": "9.3.4",
     "@pinia/nuxt": "^0.5.4",
     "daisyui": "^4.12.10",
     "nuxt": "^3.16.1",

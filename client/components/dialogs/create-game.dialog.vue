@@ -1,38 +1,51 @@
 <script setup lang="ts">
   import type { DtoGame } from '#shared/utils';
-  import { getPlayers, onMounted, ref } from '#imports';
+  import { ref, useI18n } from '#imports';
   import type { FormError } from '@nuxt/ui';
-  import { createGame } from '~/composables/use-games';
+  import { createGame } from '~/composables/game.service';
+  import { useGameStore } from '~/store/game.store';
+  import { usePlayerStore } from '~/store/player.store';
+
+  const i18n = useI18n();
+  const gameStore = useGameStore();
+  const playerStore = usePlayerStore();
+
+  const players = await playerStore.fetchPlayers();
 
   const formState = ref<DtoGame>({});
   const selectedPlayers = ref<number[]>([]);
-  // const playerStore = usePlayerStore();
-  // const players = ref<ModelsPlayer[]>();
-  const { players } = getPlayers();
-
-  onMounted(() => {});
+  const isOpen = ref(false);
 
   const validate = (state: DtoGame): FormError[] => {
     const errors: FormError[] = [];
-    if (!state.name) errors.push({ name: 'name', message: 'Name is required' });
-    if (!state.gameMode) errors.push({ name: 'gameMode', message: 'Game Mode is required' });
+    if (!state.name) errors.push({ name: 'name', message: i18n.t('name-required-error') });
+    if (!state.gameMode)
+      errors.push({ name: 'gameMode', message: i18n.t('gamemode-required-error') });
+    if (!(selectedPlayers.value.length >= 2))
+      errors.push({ name: 'players', message: i18n.t('players-required-error') });
     return errors;
   };
 
   const onSubmit = async () => {
-    console.log(formState.value);
-    console.log(selectedPlayers.value);
     const result = await createGame({
       name: formState.value.name,
       gameMode: formState.value.gameMode,
-      players: players.value.filter(player => selectedPlayers.value.includes(player.id)),
+      players: players.value.filter(player => selectedPlayers.value.includes(player.id!)),
     });
+    gameStore.fetchGames();
     console.log(result);
+    onClose();
+  };
+
+  const onClose = () => {
+    isOpen.value = false;
+    formState.value = {};
+    selectedPlayers.value = [];
   };
 </script>
 <template>
-  <UModal title="Create Game">
-    <UButton label="Create Game" icon="i-lucide-plus" />
+  <UModal v-model:open="isOpen" :close="false" :dismissible="false" :title="$t('create-game')">
+    <UButton :label="$t('create-game')" icon="i-lucide-plus" />
     <template #body>
       <UForm
         :validate="validate"
@@ -40,13 +53,13 @@
         class="space-y-4 flex flex-col items-center"
         @submit="onSubmit"
       >
-        <UFormField label="Name" name="name">
+        <UFormField :label="$t('game-name')" name="name">
           <UInput v-model="formState.name" />
         </UFormField>
-        <UFormField label="Game Mode" name="gameMode">
+        <UFormField :label="$t('game-mode')" name="gameMode">
           <UInput v-model="formState.gameMode" />
         </UFormField>
-        <UFormField label="Players" name="players">
+        <UFormField :label="$t('players')" name="players">
           <USelect
             :items="players"
             v-model="selectedPlayers"
@@ -56,8 +69,9 @@
             class="w-52"
           />
         </UFormField>
-        <div class="flex justify-end">
-          <UButton icon="i-lucide-save" type="submit">Save</UButton>
+        <div class="flex justify-end gap-11">
+          <UButton icon="i-lucide-save" type="submit">{{ $t('save') }}</UButton>
+          <UButton icon="i-lucide-x" @click="onClose">{{ $t('cancel') }}</UButton>
         </div>
       </UForm>
     </template>

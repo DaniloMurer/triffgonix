@@ -1,0 +1,15 @@
+{
+  "cancel": "Abbrechen",
+  "clear-errors": "Fehler bereinigen",
+  "create-game": "Spiel erstellen",
+  "error-code": "Fehlercode",
+  "error-message": "Fehlermeldung",
+  "game-mode": "Spielmodus",
+  "game-name": "Spielname",
+  "gamemode-required-error": "Es muss ein Spielmodus angegeben werden",
+  "language": "Sprache",
+  "name-required-error": "Es muss ein Spielname angegeben werden",
+  "players": "Spieler",
+  "players-required-error": "Es müssen mindistens zwei Spieler ausgewählt werden",
+  "save": "Speichern"
+}

@@ -1,14 +1,9 @@
 <script setup lang="ts">
-  import { useGames } from '~/composables/use-games';
-  import { getPlayers } from '~/composables/get-players';
-  import { usePlayerStore } from '~/store/user.store';
+  import { useGameStore } from '~/store/game.store';
 
-  const { games } = useGames();
-  const { players } = getPlayers();
+  const gameStore = useGameStore();
 
-  const userStore = usePlayerStore();
-
-  userStore.setPlayers(players.value);
+  const games = await gameStore.fetchGames();
 </script>
 <template>
   <UContainer class="p-20 flex flex-wrap justify-center gap-4">

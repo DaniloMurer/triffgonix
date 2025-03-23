@@ -1,18 +1,15 @@
 import { getApiUser, type ModelsPlayer } from '#shared/utils';
 
-export const getPlayers = () => {
+export const usePlayerService = () => {
   const players = ref<ModelsPlayer[]>([]);
 
   const fetchPlayers = async () => {
     const response = await getApiUser();
     if (response.data) {
-      players.value = response.data;
+      return response.data;
     }
+    return [];
   };
-
-  onMounted(() => {
-    void fetchPlayers();
-  });
 
   return {
     players,

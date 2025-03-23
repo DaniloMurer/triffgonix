@@ -1,6 +1,6 @@
 import { type DtoGame, getApiGame, type ModelsGame, postApiGame } from '#shared/utils';
 
-export const useGames = () => {
+export const useGameService = () => {
   const games = ref<ModelsGame[]>([]);
   const loading = ref(false);
 
@@ -9,18 +9,16 @@ export const useGames = () => {
     try {
       const response = await getApiGame();
       if (response.data) {
-        games.value = response.data;
+        return response.data;
       }
+      return [];
     } catch (error) {
       console.error('Error fetching games:', error);
+      return [];
     } finally {
       loading.value = false;
     }
   };
-
-  onMounted(() => {
-    void fetchGames();
-  });
 
   return {
     games,
