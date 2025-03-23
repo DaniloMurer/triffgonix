@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/DaniloMurer/triffgonix/server/internal/api"
+	websocket "github.com/DaniloMurer/triffgonix/server/internal/api"
+	"github.com/DaniloMurer/triffgonix/server/internal/api/game"
+	"github.com/DaniloMurer/triffgonix/server/internal/api/player"
 	"github.com/DaniloMurer/triffgonix/server/internal/database"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -35,15 +37,15 @@ func setupRouter() *gin.Engine {
 
 	group := router.Group("/api")
 	{
-		group.POST("/user", api.CreatePlayer)
-		group.GET("/user", api.GetPlayers)
-		group.POST("/game", api.CreateGame)
-		group.GET("/game", api.GetGames)
+		group.POST("/user", apiplayer.CreatePlayer)
+		group.GET("/user", apiplayer.GetPlayers)
+		group.POST("/game", apigame.CreateGame)
+		group.GET("/game", apigame.GetGames)
 	}
 	socketGroup := router.Group("/ws")
 	{
-		socketGroup.GET("/dart/:gameId", api.HandleDartWebSocket)
-		socketGroup.GET("/dart", api.HandleGeneralWebsocket)
+		socketGroup.GET("/dart/:gameId", websocket.HandleDartWebSocket)
+		socketGroup.GET("/dart", websocket.HandleGeneralWebsocket)
 	}
 
 	return router
