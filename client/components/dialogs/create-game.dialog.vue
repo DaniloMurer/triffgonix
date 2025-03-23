@@ -33,7 +33,6 @@
       players: players.value.filter(player => selectedPlayers.value.includes(player.id!)),
     });
     gameStore.fetchGames();
-    console.log(result);
     onClose();
   };
 

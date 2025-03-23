@@ -11,7 +11,7 @@ export interface GameStatePlayer {
 }
 
 export interface GameStatePlayers {
-  allPlayers: GameStatePlayer;
+  allPlayers: GameStatePlayer[];
   currentPlayer: GameStatePlayer;
 }
 

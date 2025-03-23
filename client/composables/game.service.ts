@@ -29,7 +29,6 @@ export const useGameService = () => {
 
 export const createGame = async (game: DtoGame) => {
   const response = await postApiGame({ body: game });
-  console.log(response);
   if (response.response.ok) {
     return response.data;
   } else {

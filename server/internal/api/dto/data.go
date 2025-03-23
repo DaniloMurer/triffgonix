@@ -24,8 +24,9 @@ func (game *Game) ToEntity() *models.Game {
 		players = append(players, *player.ToEntity())
 	}
 	return &models.Game{
-		Name:    game.Name,
-		Players: players,
+		Name:     game.Name,
+		GameMode: game.GameMode,
+		Players:  players,
 	}
 }
 
@@ -36,6 +37,7 @@ func (game *Game) FromEntity(gameEntity *models.Game) {
 	}
 	game.Id = gameEntity.Id
 	game.Name = gameEntity.Name
+	game.GameMode = gameEntity.GameMode
 	game.Players = players
 }
 

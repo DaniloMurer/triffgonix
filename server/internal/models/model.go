@@ -29,6 +29,7 @@ type Throw struct {
 
 type Game struct {
 	Model
-	Name    string   `json:"name"`
-	Players []Player `gorm:"many2many:game_players;" json:"players"`
+	Name     string   `json:"name"`
+	GameMode string   `json:"gameMode"`
+	Players  []Player `gorm:"many2many:game_players;" json:"players"`
 }

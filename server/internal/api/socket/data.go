@@ -10,6 +10,7 @@ const (
 	UndoThrow MessageType = "undo-throw"
 	NewGame   MessageType = "new-game"
 	GameState MessageType = "game-state"
+	Games     MessageType = "games"
 )
 
 type IncomingMessage struct {

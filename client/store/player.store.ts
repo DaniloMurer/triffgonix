@@ -16,7 +16,6 @@ export const usePlayerStore = defineStore('player', () => {
   };
 
   const setPlayers = (newUsers: DtoPlayer[]) => {
-    console.log('setting players');
     players.value = newUsers;
   };
 
