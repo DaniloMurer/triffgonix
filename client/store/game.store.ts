@@ -4,14 +4,13 @@ import { useGameService } from '~/composables/game.service';
 
 export const useGameStore = defineStore('game', () => {
   const gamesState = ref<ModelsGame[]>([]);
+  const gameService = useGameService();
 
   const getGames = () => {
     return gamesState.value;
   };
 
   const fetchGames = async () => {
-    const gameService = useGameService();
-
     gamesState.value = await gameService.fetchGames();
     return gamesState;
   };

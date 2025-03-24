@@ -1,8 +1,6 @@
-import { type DtoPlayer, getApiUser } from '#shared/utils';
+import { getApiUser } from '#shared/utils';
 
 export const usePlayerService = () => {
-  const players = ref<DtoPlayer[]>([]);
-
   const fetchPlayers = async () => {
     const response = await getApiUser();
     if (response.data) {
@@ -12,7 +10,6 @@ export const usePlayerService = () => {
   };
 
   return {
-    players,
     fetchPlayers,
   };
 };

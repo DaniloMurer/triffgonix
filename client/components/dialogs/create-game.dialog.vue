@@ -27,10 +27,12 @@
   };
 
   const onSubmit = async () => {
-    const result = await createGame({
+    await createGame({
       name: formState.value.name,
       gameMode: formState.value.gameMode,
       players: players.value.filter(player => selectedPlayers.value.includes(player.id!)),
+    }).catch(error => {
+      console.error(error);
     });
     gameStore.fetchGames();
     onClose();

@@ -1,7 +1,6 @@
-import { type DtoGame, getApiGame, type ModelsGame, postApiGame } from '#shared/utils';
+import { type DtoGame, getApiGame, postApiGame } from '#shared/utils';
 
 export const useGameService = () => {
-  const games = ref<ModelsGame[]>([]);
   const loading = ref(false);
 
   const fetchGames = async () => {
@@ -21,7 +20,6 @@ export const useGameService = () => {
   };
 
   return {
-    games,
     loading,
     fetchGames,
   };
