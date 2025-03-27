@@ -20,6 +20,8 @@ type Logger struct {
 	Logger *log.Logger
 }
 
+var _, isVerbose = os.LookupEnv("VERBOSE")
+
 func NewLogger() Logger {
 	newLogger := log.New(os.Stdout, "[TRIFFGONIX] - ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	return Logger{Logger: newLogger}
@@ -56,8 +58,7 @@ func (logger Logger) Error(message string, args ...any) {
 }
 
 func (logger Logger) Trace(message string, args ...any) {
-	_, exists := os.LookupEnv("VERBOSE")
-	if !exists {
+	if !isVerbose {
 		return
 	}
 	var formattedMessage string

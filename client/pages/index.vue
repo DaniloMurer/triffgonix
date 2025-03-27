@@ -8,12 +8,13 @@
 
   // eslint-disable-next-line no-undef
   const onMessage = (message: MessageEvent) => {
+    console.log('message received');
     const content = JSON.parse(message.data) as IncomingSocketMessage;
     if (content.type === 'games') {
       games.value = content.content as GameStateContent[];
     }
   };
-
+  socketService.connectToSocket('/ws/dart');
   socketService.listenOnMessage(onMessage);
 </script>
 <template>

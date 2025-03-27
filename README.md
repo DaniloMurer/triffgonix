@@ -76,7 +76,12 @@ this will open the code coverage in your default browser.
 
 ### generate openapi client
 
-you can generate the whole api client using following command:
+install swaggo for golang to generate swagger doc using godoc:
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+then you can generate the whole api client using following command:
 ```bash
 yarn generate:api
 ```

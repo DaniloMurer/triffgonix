@@ -14,6 +14,7 @@ export type DtoPlayer = {
 };
 
 export type ModelsGame = {
+    gameMode?: string;
     id?: number;
     name?: string;
     players?: Array<ModelsPlayer>;
@@ -108,39 +109,6 @@ export type PostApiUserResponses = {
 
 export type PostApiUserResponse = PostApiUserResponses[keyof PostApiUserResponses];
 
-export type GetWsDartData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/ws/dart';
-};
-
-export type GetWsDartErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-};
-
-export type GetWsDartByGameIdData = {
-    body?: never;
-    path: {
-        /**
-         * Game ID
-         */
-        gameId: string;
-    };
-    query?: never;
-    url: '/ws/dart/{gameId}';
-};
-
-export type GetWsDartByGameIdErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-};
-
 export type ClientOptions = {
-    baseUrl: 'http://localhost:8080' | (string & {});
+    baseUrl: string;
 };

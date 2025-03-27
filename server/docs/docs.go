@@ -134,55 +134,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/ws/dart": {
-            "get": {
-                "description": "Handles WebSocket connections for general game updates",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "websocket"
-                ],
-                "summary": "Handle general WebSocket connections",
-                "responses": {
-                    "101": {
-                        "description": "Switching Protocols to WebSocket"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    }
-                }
-            }
-        },
-        "/ws/dart/{gameId}": {
-            "get": {
-                "description": "Handles WebSocket connections for specific dart games",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "websocket"
-                ],
-                "summary": "Handle game-specific WebSocket connections",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Game ID",
-                        "name": "gameId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "101": {
-                        "description": "Switching Protocols to WebSocket"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -223,6 +174,9 @@ const docTemplate = `{
         "models.Game": {
             "type": "object",
             "properties": {
+                "gameMode": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -254,7 +208,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "http://localhost:8080",
+	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Triffgonix API",

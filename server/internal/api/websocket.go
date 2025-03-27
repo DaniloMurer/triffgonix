@@ -26,15 +26,7 @@ func CreateHub(savedGame *models.Game, game engine.Game) {
 	broadcastNewGame(savedGame)
 }
 
-// HandleDartWebSocket godoc
-// @Summary Handle game-specific WebSocket connections
-// @Description Handles WebSocket connections for specific dart games
-// @Tags websocket
-// @Accept json
-// @Param gameId path string true "Game ID"
-// @Success 101 "Switching Protocols to WebSocket"
-// @Failure 400 "Bad Request"
-// @Router /ws/dart/{gameId} [get]
+// HandleDartWebSocket Manages the connection lifecycle for a dart game session.
 func HandleDartWebSocket(c *gin.Context) {
 	cleanupHubs()
 	// FIXME: only temporary
@@ -54,6 +46,9 @@ func HandleDartWebSocket(c *gin.Context) {
 		logger.Error("error while reading from socket connection: %v", err)
 		return
 	}
+	// FIXME: review this code. seems to be weird. i add the connection to the hub if handshake
+	// to then later handle the connection on a separate thread. maybe i can merge this? did i
+	// do this as a sort of rejoin feature? doesn't seem to be thought through tho
 	switch *message.Type {
 	case socket.Handshake:
 		hub, exists := hubs[gameId]
@@ -72,14 +67,8 @@ func HandleDartWebSocket(c *gin.Context) {
 	}
 }
 
-// HandleGeneralWebsocket godoc
-// @Summary Handle general WebSocket connections
-// @Description Handles WebSocket connections for general game updates
-// @Tags websocket
-// @Accept json
-// @Success 101 "Switching Protocols to WebSocket"
-// @Failure 400 "Bad Request"
-// @Router /ws/dart [get]
+// HandleGeneralWebsocket Sends a list of games to the client and tracks the connection,
+// and handles connections.
 func HandleGeneralWebsocket(c *gin.Context) {
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true
@@ -109,7 +98,8 @@ func broadcastNewGame(newGame *models.Game) {
 		for _, hub := range hubs {
 			games = append(games, hub.GetGame())
 		}
-		generalConnections = append(generalConnections, conn)
+		// FIXME: multiple connections don't work here. broken pipe. question is, if that's an issue
+		// when calling from the same browser instance, if not we have a larger issue
 		err := conn.WriteJSON(socket.OutgoingMessage{Type: socket.Games, Content: games})
 		if err != nil {
 			logger.Error("error while writing games message: %+v", err)

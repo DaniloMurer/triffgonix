@@ -23,6 +23,8 @@ definitions:
     type: object
   models.Game:
     properties:
+      gameMode:
+        type: string
       id:
         type: integer
       name:
@@ -39,7 +41,6 @@ definitions:
       username:
         type: string
     type: object
-host: http://localhost:8080
 info:
   contact: {}
   description: Triffgonix api documentation
@@ -125,36 +126,4 @@ paths:
       summary: Create a new player
       tags:
       - players
-  /ws/dart:
-    get:
-      consumes:
-      - application/json
-      description: Handles WebSocket connections for general game updates
-      responses:
-        "101":
-          description: Switching Protocols to WebSocket
-        "400":
-          description: Bad Request
-      summary: Handle general WebSocket connections
-      tags:
-      - websocket
-  /ws/dart/{gameId}:
-    get:
-      consumes:
-      - application/json
-      description: Handles WebSocket connections for specific dart games
-      parameters:
-      - description: Game ID
-        in: path
-        name: gameId
-        required: true
-        type: string
-      responses:
-        "101":
-          description: Switching Protocols to WebSocket
-        "400":
-          description: Bad Request
-      summary: Handle game-specific WebSocket connections
-      tags:
-      - websocket
 swagger: "2.0"

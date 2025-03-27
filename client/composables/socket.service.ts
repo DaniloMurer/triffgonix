@@ -1,10 +1,18 @@
+import { WEBSOCKET_BASE_PATH } from '~/utils/app.config';
+
+let webSocket: WebSocket;
+
 export const useSocketService = () => {
+  const connectToSocket = (path: string) => {
+    webSocket = new WebSocket(new URL(path, WEBSOCKET_BASE_PATH).toString());
+  };
+
   const listenOnMessage = (handler: (event: MessageEvent) => void) => {
-    const webSocket = new WebSocket('ws://localhost:8080/ws/dart');
-    webSocket.onmessage = handler;
+    webSocket.addEventListener('message', handler);
   };
 
   return {
+    connectToSocket,
     listenOnMessage,
   };
 };
