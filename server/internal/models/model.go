@@ -1,35 +1,43 @@
 package models
 
 import (
-	"time"
+  "github.com/DaniloMurer/triffgonix/server/internal/api/dto"
+  "time"
 
-	"gorm.io/gorm"
+  "gorm.io/gorm"
 )
 
 // Model base struct for database models
 type Model struct {
-	Id        uint           `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time      `json:"-"`
-	UpdatedAt time.Time      `json:"-"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+  Id        uint           `gorm:"primarykey" json:"id"`
+  CreatedAt time.Time      `json:"-"`
+  UpdatedAt time.Time      `json:"-"`
+  DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 type Player struct {
-	Model
-	PlayerName string `gorm:"unique" json:"username"`
-	// TODO: make player - throws connection
+  Model
+  PlayerName string `gorm:"unique" json:"username"`
+  // TODO: make player - throws connection
+}
+
+func (player *Player) ToDto() dto.Player {
+  return dto.Player{
+    Id:   player.Id,
+    Name: player.PlayerName,
+  }
 }
 
 type Throw struct {
-	Model
-	Points        int16 `json:"points"`
-	Multiplicator int16 `json:"multiplicator"`
-	PlayerId      uint  `json:"playerId"`
+  Model
+  Points        int16 `json:"points"`
+  Multiplicator int16 `json:"multiplicator"`
+  PlayerId      uint  `json:"playerId"`
 }
 
 type Game struct {
-	Model
-	Name     string   `json:"name"`
-	GameMode string   `json:"gameMode"`
-	Players  []Player `gorm:"many2many:game_players;" json:"players"`
+  Model
+  Name     string   `json:"name"`
+  GameMode string   `json:"gameMode"`
+  Players  []Player `gorm:"many2many:game_players;" json:"players"`
 }

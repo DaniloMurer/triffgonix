@@ -1,11 +1,11 @@
 package apiplayer
 
 import (
-	"github.com/DaniloMurer/triffgonix/server/internal/api/dto"
-	"github.com/DaniloMurer/triffgonix/server/internal/database"
-	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
-	"github.com/gin-gonic/gin"
-	"net/http"
+  "github.com/DaniloMurer/triffgonix/server/internal/api/dto"
+  "github.com/DaniloMurer/triffgonix/server/internal/database"
+  "github.com/DaniloMurer/triffgonix/server/pkg/logging"
+  "github.com/gin-gonic/gin"
+  "net/http"
 )
 
 var logger = logging.NewLogger()
@@ -17,24 +17,24 @@ var logger = logging.NewLogger()
 // @Accept json
 // @Produce json
 // @Param player body dto.Player true "Player information"
-// @Success 201 {object} models.Player "Created player"
+// @Success 201 {object} dto.Player "Created player"
 // @Failure 500 "Internal Server Error"
 // @Router /api/user [post]
 func CreatePlayer(c *gin.Context) {
-	var player dto.Player
-	err := c.BindJSON(&player)
-	if err != nil {
-		logger.Error("error while parsing player json")
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-	err, newPlayer := database.CreatePlayer(player.ToEntity())
-	if err != nil {
-		logger.Error("error while saving player to database: %+v", err)
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-	c.JSON(http.StatusCreated, &newPlayer)
+  var player dto.Player
+  err := c.BindJSON(&player)
+  if err != nil {
+    logger.Error("error while parsing player json")
+    c.Status(http.StatusInternalServerError)
+    return
+  }
+  err, newPlayer := database.CreatePlayer(player.ToEntity())
+  if err != nil {
+    logger.Error("error while saving player to database: %+v", err)
+    c.Status(http.StatusInternalServerError)
+    return
+  }
+  c.JSON(http.StatusCreated, newPlayer.ToDto())
 }
 
 // GetPlayers godoc
@@ -45,11 +45,11 @@ func CreatePlayer(c *gin.Context) {
 // @Success 200 {array} dto.Player "List of players"
 // @Router /api/user [get]
 func GetPlayers(c *gin.Context) {
-	users := database.FindAllUsers()
-	var userDtos []dto.Player
-	for _, user := range users {
-		userDto := dto.Player{}
-		userDtos = append(userDtos, userDto.FromEntity(&user))
-	}
-	c.JSON(http.StatusOK, &userDtos)
+  users := database.FindAllUsers()
+  var userDtos []dto.Player
+  for _, user := range users {
+    userDto := dto.Player{}
+    userDtos = append(userDtos, userDto.FromEntity(&user))
+  }
+  c.JSON(http.StatusOK, &userDtos)
 }

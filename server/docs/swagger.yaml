@@ -120,7 +120,7 @@ paths:
         "201":
           description: Created player
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: '#/definitions/dto.Player'
         "500":
           description: Internal Server Error
       summary: Create a new player

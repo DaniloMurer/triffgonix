@@ -104,7 +104,7 @@ export type PostApiUserResponses = {
     /**
      * Created player
      */
-    201: ModelsPlayer;
+    201: DtoPlayer;
 };
 
 export type PostApiUserResponse = PostApiUserResponses[keyof PostApiUserResponses];

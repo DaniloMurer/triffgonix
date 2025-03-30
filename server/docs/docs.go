@@ -126,7 +126,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created player",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/dto.Player"
                         }
                     },
                     "500": {
