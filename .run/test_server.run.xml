@@ -3,6 +3,9 @@
     <module name="triffgonix" />
     <working_directory value="$PROJECT_DIR$/server" />
     <go_parameters value="-i -coverprofile=cover.out" />
+    <envs>
+      <env name="VERBOSE" value="true" />
+    </envs>
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
