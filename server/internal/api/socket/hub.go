@@ -4,7 +4,7 @@ import (
 	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine"
 	"github.com/DaniloMurer/triffgonix/server/internal/domain"
 	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
-	"github.com/gorilla/websocket"
+	"github.com/gofiber/contrib/websocket"
 )
 
 var logger = logging.NewLogger()

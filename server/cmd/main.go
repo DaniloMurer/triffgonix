@@ -5,8 +5,9 @@ import (
 	"github.com/DaniloMurer/triffgonix/server/internal/api/game"
 	"github.com/DaniloMurer/triffgonix/server/internal/api/player"
 	"github.com/DaniloMurer/triffgonix/server/internal/database"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	fiberwebsocket "github.com/gofiber/contrib/websocket"
+	"github.com/gofiber/fiber/v2"
+	"log"
 )
 
 //	@title			Triffgonix API
@@ -17,42 +18,31 @@ import (
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
 // sets up the router
-func setupRouter() *gin.Engine {
+func setupFiberApp() *fiber.App {
 	database.AutoMigrate()
+	app := fiber.New()
 
-	router := gin.Default()
+	api := app.Group("/api")
 
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
-	corsConfig.AllowCredentials = true
-	corsConfig.AllowHeaders = []string{"Content-Type", "Accept", "Authorization", "Origin"}
+	api.Post("/player", apiplayer.CreatePlayer)
+	api.Get("/player", apiplayer.GetPlayers)
+	api.Post("/game", apigame.CreateGame)
+	api.Get("/game", apigame.GetGames)
 
-	router.Use(cors.New(corsConfig))
-
-	router.GET("/", func(c *gin.Context) {
-		c.String(200, "Welcome")
+	ws := app.Group("/ws")
+	ws.Get("/dart", func(c *fiber.Ctx) error {
+		if fiberwebsocket.IsWebSocketUpgrade(c) {
+			c.Locals("allowed", true)
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
 	})
-
-	group := router.Group("/api")
-	{
-		group.POST("/user", apiplayer.CreatePlayer)
-		group.GET("/user", apiplayer.GetPlayers)
-		group.POST("/game", apigame.CreateGame)
-		group.GET("/game", apigame.GetGames)
-	}
-	socketGroup := router.Group("/ws")
-	{
-		socketGroup.GET("/dart/:gameId", websocket.HandleDartWebSocket)
-		socketGroup.GET("/dart", websocket.HandleGeneralWebsocket)
-	}
-
-	return router
+	ws.Get("/dart/general", fiberwebsocket.New(websocket.HandleGeneralWebsocket))
+	ws.Get("/dart/:gameId", fiberwebsocket.New(websocket.HandleDartWebSocket))
+	return app
 }
 
 func main() {
-	router := setupRouter()
-	err := router.Run("0.0.0.0:8080")
-	if err != nil {
-		panic("Error while starting server")
-	}
+	app := setupFiberApp()
+	log.Fatal(app.Listen("0.0.0.0:8080"))
 }

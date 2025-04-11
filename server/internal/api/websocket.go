@@ -6,14 +6,11 @@ import (
 	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine"
 	"github.com/DaniloMurer/triffgonix/server/internal/models"
 	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
-	"net/http"
+	"github.com/gofiber/contrib/websocket"
 	"strconv"
 )
 
 var (
-	upgrader           = websocket.Upgrader{}
 	hubs               = map[string]socket.Hub{}
 	generalConnections []*websocket.Conn
 )
@@ -27,21 +24,12 @@ func CreateHub(savedGame *models.Game, game engine.Game) {
 }
 
 // HandleDartWebSocket Manages the connection lifecycle for a dart game session.
-func HandleDartWebSocket(c *gin.Context) {
+func HandleDartWebSocket(c *websocket.Conn) {
 	cleanupHubs()
-	// FIXME: only temporary
-	upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		logger.Error("error while upgrading request to websocket protocol: %v", err)
-		return
-	}
-	gameId := c.Param("gameId")
+	gameId := c.Params("gameId")
 	// get message from socket
 	var message socket.IncomingMessage
-	err = conn.ReadJSON(&message)
+	err := c.ReadJSON(&message)
 	if err != nil {
 		logger.Error("error while reading from socket connection: %v", err)
 		return
@@ -53,14 +41,14 @@ func HandleDartWebSocket(c *gin.Context) {
 	case socket.Handshake:
 		hub, exists := hubs[gameId]
 		if exists {
-			hub.RegisterNewClient(conn)
+			hub.RegisterNewClient(c)
 		}
 	}
 	hub, exists := hubs[gameId]
 	if exists {
-		go hub.HandleConnection(conn)
+		go hub.HandleConnection(c)
 	} else {
-		err := conn.Close()
+		err := c.Close()
 		if err != nil {
 			logger.Error("error while closing websocket connection: %+v", err)
 		}
@@ -69,21 +57,13 @@ func HandleDartWebSocket(c *gin.Context) {
 
 // HandleGeneralWebsocket Sends a list of games to the client and tracks the connection,
 // and handles connections.
-func HandleGeneralWebsocket(c *gin.Context) {
-	upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		logger.Error("error while upgrading request to websocket protocol: %v", err)
-		return
-	}
+func HandleGeneralWebsocket(c *websocket.Conn) {
 	var games []engine.GameDto
 	for _, hub := range hubs {
 		games = append(games, hub.GetGame())
 	}
-	generalConnections = append(generalConnections, conn)
-	err = conn.WriteJSON(socket.OutgoingMessage{Type: socket.Games, Content: games})
+	generalConnections = append(generalConnections, c)
+	err := c.WriteJSON(socket.OutgoingMessage{Type: socket.Games, Content: games})
 	if err != nil {
 		logger.Error("error while writing games message: %+v", err)
 		return

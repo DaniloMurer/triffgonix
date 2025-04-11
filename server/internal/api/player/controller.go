@@ -4,7 +4,7 @@ import (
 	"github.com/DaniloMurer/triffgonix/server/internal/api/dto"
 	"github.com/DaniloMurer/triffgonix/server/internal/database"
 	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"net/http"
 )
 
@@ -19,22 +19,22 @@ var logger = logging.NewLogger()
 // @Param player body dto.Player true "Player information"
 // @Success 201 {object} dto.Player "Created player"
 // @Failure 500 "Internal Server Error"
-// @Router /api/user [post]
-func CreatePlayer(c *gin.Context) {
+// @Router /api/player [post]
+func CreatePlayer(c *fiber.Ctx) error {
 	var player dto.Player
-	err := c.BindJSON(&player)
+	err := c.BodyParser(&player)
 	if err != nil {
 		logger.Error("error while parsing player json")
 		c.Status(http.StatusInternalServerError)
-		return
+		return nil
 	}
 	err, newPlayer := database.CreatePlayer(player.ToEntity())
 	if err != nil {
 		logger.Error("error while saving player to database: %+v", err)
 		c.Status(http.StatusInternalServerError)
-		return
+		return nil
 	}
-	c.JSON(http.StatusCreated, player.FromEntity(newPlayer))
+	return c.Status(http.StatusCreated).JSON(&newPlayer)
 }
 
 // GetPlayers godoc
@@ -43,13 +43,13 @@ func CreatePlayer(c *gin.Context) {
 // @Tags players
 // @Produce json
 // @Success 200 {array} dto.Player "List of players"
-// @Router /api/user [get]
-func GetPlayers(c *gin.Context) {
+// @Router /api/player [get]
+func GetPlayers(c *fiber.Ctx) error {
 	users := database.FindAllUsers()
 	var userDtos []dto.Player
 	for _, user := range users {
 		userDto := dto.Player{}
 		userDtos = append(userDtos, userDto.FromEntity(&user))
 	}
-	c.JSON(http.StatusOK, &userDtos)
+	return c.Status(http.StatusOK).JSON(&userDtos)
 }

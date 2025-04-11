@@ -62,52 +62,52 @@ export type PostApiGameResponses = {
     /**
      * Created game
      */
-    201: ModelsGame;
+    201: DtoGame;
 };
 
 export type PostApiGameResponse = PostApiGameResponses[keyof PostApiGameResponses];
 
-export type GetApiUserData = {
+export type GetApiPlayerData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/user';
+    url: '/api/player';
 };
 
-export type GetApiUserResponses = {
+export type GetApiPlayerResponses = {
     /**
      * List of players
      */
     200: Array<DtoPlayer>;
 };
 
-export type GetApiUserResponse = GetApiUserResponses[keyof GetApiUserResponses];
+export type GetApiPlayerResponse = GetApiPlayerResponses[keyof GetApiPlayerResponses];
 
-export type PostApiUserData = {
+export type PostApiPlayerData = {
     /**
      * Player information
      */
     body: DtoPlayer;
     path?: never;
     query?: never;
-    url: '/api/user';
+    url: '/api/player';
 };
 
-export type PostApiUserErrors = {
+export type PostApiPlayerErrors = {
     /**
      * Internal Server Error
      */
     500: unknown;
 };
 
-export type PostApiUserResponses = {
+export type PostApiPlayerResponses = {
     /**
      * Created player
      */
     201: DtoPlayer;
 };
 
-export type PostApiUserResponse = PostApiUserResponses[keyof PostApiUserResponses];
+export type PostApiPlayerResponse = PostApiPlayerResponses[keyof PostApiPlayerResponses];
 
 export type ClientOptions = {
     baseUrl: string;

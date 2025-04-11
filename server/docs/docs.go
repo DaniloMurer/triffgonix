@@ -68,7 +68,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created game",
                         "schema": {
-                            "$ref": "#/definitions/models.Game"
+                            "$ref": "#/definitions/dto.Game"
                         }
                     },
                     "500": {
@@ -77,7 +77,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user": {
+        "/api/player": {
             "get": {
                 "description": "Retrieves all players from the system",
                 "produces": [

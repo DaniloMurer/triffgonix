@@ -3,6 +3,7 @@ package socket
 type MessageType string
 
 const (
+
 	// TODO: implement event types the client can send
 	Throw     MessageType = "throw"
 	Handshake MessageType = "handshake"

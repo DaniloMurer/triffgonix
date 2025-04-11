@@ -1,8 +1,8 @@
-import { getApiUser } from '#shared/utils';
+import { getApiPlayer } from '#shared/utils';
 
 export const usePlayerService = () => {
   const fetchPlayers = async () => {
-    const response = await getApiUser();
+    const response = await getApiPlayer();
     if (response.data) {
       return response.data;
     }

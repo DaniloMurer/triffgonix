@@ -14,7 +14,7 @@
       games.value = content.content as GameStateContent[];
     }
   };
-  socketService.connectToSocket('/ws/dart');
+  socketService.connectToSocket('/ws/dart/general');
   socketService.listenOnMessage(onMessage);
 </script>
 <template>

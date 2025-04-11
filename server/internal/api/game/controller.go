@@ -7,7 +7,7 @@ import (
 	"github.com/DaniloMurer/triffgonix/server/internal/dart/engine/x01"
 	"github.com/DaniloMurer/triffgonix/server/internal/database"
 	"github.com/DaniloMurer/triffgonix/server/pkg/logging"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"net/http"
 )
 
@@ -20,23 +20,23 @@ var logger = logging.NewLogger()
 // @Accept json
 // @Produce json
 // @Param game body dto.Game true "Game information"
-// @Success 201 {object} models.Game "Created game"
+// @Success 201 {object} dto.Game "Created game"
 // @Failure 500 "Internal Server Error"
 // @Router /api/game [post]
-func CreateGame(c *gin.Context) {
+func CreateGame(c *fiber.Ctx) error {
 	var newGame dto.Game
-	err := c.BindJSON(&newGame)
+	err := c.BodyParser(&newGame)
 	if err != nil {
 		logger.Error("error while binding json: %+v", err)
 		c.Status(http.StatusInternalServerError)
-		return
+		return nil
 	}
 	logger.Trace("new game to be saved: %+v", &newGame)
 	err, savedGame := database.CreateGame(newGame.ToEntity())
 	if err != nil {
 		logger.Error("error while saving game to the databse: %+v", err)
 		c.Status(http.StatusInternalServerError)
-		return
+		return nil
 	}
 
 	// create new game and hub
@@ -50,7 +50,10 @@ func CreateGame(c *gin.Context) {
 		Engine:  x01.New(newGame.StartingScore),
 	}
 	api.CreateHub(savedGame, game)
-	c.JSON(http.StatusCreated, &savedGame)
+
+	var gameDto dto.Game
+	gameDto.FromEntity(savedGame)
+	return c.Status(http.StatusCreated).JSON(&gameDto)
 }
 
 // GetGames godoc
@@ -60,7 +63,7 @@ func CreateGame(c *gin.Context) {
 // @Produce json
 // @Success 200 {array} models.Game "List of games"
 // @Router /api/game [get]
-func GetGames(c *gin.Context) {
+func GetGames(c *fiber.Ctx) error {
 	games := database.FindAllGames()
-	c.JSON(http.StatusOK, &games)
+	return c.Status(http.StatusOK).JSON(&games)
 }

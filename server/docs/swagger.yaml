@@ -82,13 +82,13 @@ paths:
         "201":
           description: Created game
           schema:
-            $ref: '#/definitions/models.Game'
+            $ref: '#/definitions/dto.Game'
         "500":
           description: Internal Server Error
       summary: Create a new game
       tags:
       - games
-  /api/user:
+  /api/player:
     get:
       description: Retrieves all players from the system
       produces:
